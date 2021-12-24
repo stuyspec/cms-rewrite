@@ -15,28 +15,42 @@ router.get("/", async (req, res) => {
 router.get("/get_articles", get_articles_handler);
 router.post("/get_articles", get_articles_handler);
 
-// Do not have create article route
-// Article must be drafted first
-/* 
 // Create an article
-router.post("/create_article", isAdminMiddleware, async (req, res, next) => {
+router.post("/publish_article", isAdminMiddleware, async (req, res, next) => {
 	try {
-		const saved_article = await create_article(req.body);
+		const draft_id = req.body.draft_id;
+		if (!draft_id) {
+			throw new Error("An id of a draft to publish was not specified");
+		}
+
+		const draft_data = await Draft.findById(draft_id).lean();
+
+		if (!draft_data) {
+			throw new Error(
+				`A draft with an id of ${draft_id} does not exist.`
+			);
+		}
+
+		delete draft_data._id;
+		delete draft_data.drafter_id;
+		delete draft_data.__v;
+
+		draft_data.is_published = true;
+
+		const articlewriter = await Article.create(draft_data);
+		const saved_article = await articlewriter.save();
+
+		await Draft.deleteOne({ _id: draft_id });
+
 		res.json({
+			message: "Published the article",
 			article: saved_article,
-			description: "Successfully created the article.",
 		});
 	} catch (error) {
 		next(error);
 	}
 });
 
-async function create_article(query) {
-	let article = await Article.create(query);
-	let saved_article = await article.save();
-	return saved_article;
-}
-*/
 async function get_articles(query) {
 	let articles = await Article.find(query);
 	return articles;
