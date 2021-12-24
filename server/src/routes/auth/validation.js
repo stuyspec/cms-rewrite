@@ -25,6 +25,24 @@ const loginValidation = (data) => {
 	const validation = schema.validate(data);
 	return validation;
 };
+// Draft Validation
+const draftValidation = (data) => {
+	const schema = Joi.object({
+		text: Joi.string().required(),
+		title: Joi.string().min(6).max(512).required(),
+		slug: Joi.string().min(6).max(512).lowercase().required(),
+		contributors: Joi.array().items(Joi.string()).required(),
+		volume: Joi.number().min(111).required(),
+		issue: Joi.number().min(0).max(365).required(),
+		section: Joi.string().required(),
+		summary: Joi.string().required(),
+		cover_image: Joi.string().uri().required(),
+		cover_image_contributor: Joi.string().max(128).required(),
+		drafter_id: Joi.string().max(128).required(),
+	});
 
-module.exports.registerValidation = registerValidation;
-module.exports.loginValidation = loginValidation;
+	//validate data
+	const validation = schema.validate(data);
+	return validation;
+};
+module.exports = { registerValidation, loginValidation, draftValidation };

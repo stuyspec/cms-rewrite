@@ -26,7 +26,7 @@ There are 3 collections, one for storing users, one for storing articles,and one
 
 Every draft is tied to the user that drafted it, through a field called uid (user id).
 
-## _.env specifications_
+## _.env_ specifications
 
 MONGODB_URI is the connection uri to mongodb
 

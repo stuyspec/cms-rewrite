@@ -57,12 +57,7 @@ router.post("/login", async (req, res, next) => {
 	try {
 		const validation = loginValidation(req.body);
 		if ("error" in validation) {
-			return res.status(200).end(
-				JSON.stringify({
-					logged_in: false,
-					message: validation.error.details[0].message,
-				})
-			);
+			throw new Error(validation.error.details[0].message);
 		}
 
 		// Check if email exists in db
@@ -95,6 +90,7 @@ router.post("/login", async (req, res, next) => {
 		res.header("auth-token", token).json({
 			token: token,
 			logged_in: true,
+			uid: user._id,
 		});
 	} catch (error) {
 		next(error);
