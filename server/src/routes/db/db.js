@@ -1,5 +1,9 @@
+const verifyTokenMiddlware = require("../auth/verifyTokenMiddleware");
+const isAdminMiddleware = require("../auth/isAdminMiddleware");
 const router = require("express").Router();
 const Article = require("../../model/Article");
+
+router.use(verifyTokenMiddlware);
 // Base route
 router.get("/", async (req, res) => {
 	res.json({ message: "Index for db" });
@@ -9,7 +13,7 @@ router.get("/", async (req, res) => {
 router.get("/get_articles", get_articles_handler);
 router.post("/get_articles", get_articles_handler);
 // Create an article
-router.post("/create_article", async (req, res, next) => {
+router.post("/create_article", isAdminMiddleware, async (req, res, next) => {
 	try {
 		const saved_article = await create_article(req.body);
 		res.json({
