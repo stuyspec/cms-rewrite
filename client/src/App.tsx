@@ -12,6 +12,7 @@ import store from "./store";
 import { setToken } from "./reducers/validAuthToken";
 import { setIsAdmin } from "./reducers/isAdmin";
 import { setIsApproved } from "./reducers/isApproved";
+import { setuid } from "./reducers/uid";
 import { useAppSelector, useAppDispatch } from "./hooks";
 
 interface ValidatorResponse {
@@ -50,6 +51,7 @@ function App() {
 					store.dispatch(setToken(saved_auth_token));
 					store.dispatch(setIsAdmin(rjson.isAdmin));
 					store.dispatch(setIsApproved(rjson.isApproved));
+					store.dispatch(setuid(rjson.uid));
 				}
 			}
 		})();
@@ -85,18 +87,19 @@ function Home() {
 	);
 	const isAdmin = useAppSelector((state) => state.isAdmin.value);
 	const isApproved = useAppSelector((state) => state.isApproved.value);
+	const uid = useAppSelector((state) => state.uid.value);
 
 	const approveUser = async (e: any) => {
 		e.preventDefault();
 		if (isAdmin) {
-			const uid = e.target.elements["uid"].value;
+			const uid_submission = e.target.elements["uid"].value;
 			const r = await fetch(window.BASE_URL + "/api/auth/approve_user", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 					"auth-token": store.getState().validauthtoken.value,
 				},
-				body: JSON.stringify({ uid }),
+				body: JSON.stringify({ uid: uid_submission }),
 			});
 
 			const rjson = (await r.json()) as { success: boolean };
@@ -110,6 +113,7 @@ function Home() {
 	return (
 		<main id="home_main">
 			<h1>Home</h1>
+			<h3>UID: {uid}</h3>
 			{validauthtoken ? (
 				<div>
 					{!isApproved ? (
