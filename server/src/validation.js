@@ -38,7 +38,6 @@ const draftValidation = (data) => {
 		summary: Joi.string().required(),
 		cover_image: Joi.string().uri().required(),
 		cover_image_contributor: Joi.string().max(128).required(),
-		drafter_id: Joi.string().max(128).required(),
 	});
 
 	//validate data

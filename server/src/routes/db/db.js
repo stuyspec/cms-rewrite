@@ -3,7 +3,7 @@ const isAdminMiddleware = require("../auth/isAdminMiddleware");
 const router = require("express").Router();
 const Article = require("../../model/Article");
 const Draft = require("../../model/Draft");
-const { draftValidation } = require("../auth/validation");
+const { draftValidation } = require("../../validation");
 
 router.use(verifyTokenMiddlware);
 // Base route
@@ -73,12 +73,12 @@ router.post("/get_drafts", get_drafts_handler);
 
 router.post("/create_draft", async (req, res, next) => {
 	try {
+		console.log("Req.user: ", req.user);
 		const validation = draftValidation(req.body);
 		if ("error" in validation) {
 			throw new Error(validation.error.details[0].message);
 		}
-
-		const saved_draft = await create_draft(req.body);
+		const saved_draft = await create_draft(req.body, req.user._id);
 		res.json({
 			draft: saved_draft,
 			description: "Successfully created the draft.",
@@ -88,8 +88,8 @@ router.post("/create_draft", async (req, res, next) => {
 	}
 });
 
-async function create_draft(query) {
-	let draft = await Draft.create(query);
+async function create_draft(query, uid) {
+	let draft = await Draft.create({ ...query, drafter_id: uid });
 	let saved_draft = await draft.save();
 	return saved_draft;
 }

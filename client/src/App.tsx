@@ -4,6 +4,7 @@ import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
 import Login from "./routes/login/login";
 import Register from "./routes/register/register";
+import Drafts from "./routes/drafts/drafts";
 import { Routes, Route, Link } from "react-router-dom";
 import { useEffect } from "react";
 import store from "./store";
@@ -64,6 +65,7 @@ function App() {
 					<Route path="/" element={<Home />} />
 					<Route path="login" element={<Login />} />
 					<Route path="register" element={<Register />} />
+					<Route path="drafts" element={<Drafts />} />
 				</Routes>
 			</main>
 		</div>
@@ -79,15 +81,6 @@ function Home() {
 		<main id="home_main">
 			<h1>Home</h1>
 			<p>Redux token: {validauthtoken}</p>
-			<p>
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-				eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-				enim ad minim veniam, quis nostrud exercitation ullamco laboris
-				nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-				in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-				nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-				sunt in culpa qui officia deserunt mollit anim id est laborum.
-			</p>
 		</main>
 	);
 }
