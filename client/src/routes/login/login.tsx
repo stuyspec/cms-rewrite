@@ -32,7 +32,6 @@ function Login() {
 		const rjson = (await r.json()) as LoginResponse;
 
 		if (rjson.logged_in) {
-			console.log("Logged in");
 			dispatch(setToken(rjson.token));
 			localStorage.setItem("auth_token", rjson.token);
 			window.location.replace("/");

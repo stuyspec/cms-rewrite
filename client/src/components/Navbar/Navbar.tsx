@@ -7,7 +7,6 @@ import store from "../../store";
 import { setToken } from "../../reducers/validAuthToken";
 
 async function signOut() {
-	console.log("sign out");
 	store.dispatch(setToken(""));
 	localStorage.setItem("auth_token", "");
 	window.location.replace("/");

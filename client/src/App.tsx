@@ -34,6 +34,7 @@ function App() {
 				const rjson = (await r.json()) as ValidatorResponse;
 
 				if (rjson.valid) {
+					console.log(rjson);
 					store.dispatch(setToken(saved_auth_token));
 				}
 			}
