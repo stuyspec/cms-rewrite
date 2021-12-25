@@ -1,28 +1,13 @@
 import React from "react";
 import "./drafts.css";
 import { useEffect, useState } from "react";
-import { useAppSelector, useAppDispatch } from "../../hooks";
+import { Link } from "react-router-dom";
 import store from "../../store";
-import { setToken } from "../../reducers/validAuthToken";
+import Draft from "../../types/Draft";
 
 interface DraftsResponse {
 	drafts: Draft[];
 	description: string;
-}
-
-interface Draft {
-	_id: string;
-	text: string;
-	title: string;
-	slug: string;
-	contributors: string[];
-	volume: number;
-	issue: number;
-	section: string;
-	summary: string;
-	cover_image: string;
-	cover_image_contributor: string;
-	drafter_id: string;
 }
 
 function Drafts() {
@@ -60,7 +45,12 @@ function Drafts() {
 			<h1>All drafts:</h1>
 
 			{drafts != null ? (
-				drafts.map((item, index) => <h2 key={index}>{item.title}</h2>)
+				drafts.map((item, _) => (
+					<Link key={item._id} to={"/draft/" + item._id}>
+						<h2>{item.title}</h2>
+						<h3>{item.summary}</h3>
+					</Link>
+				))
 			) : (
 				<></>
 			)}

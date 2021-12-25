@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar/Navbar";
 import Login from "./routes/login/login";
 import Register from "./routes/register/register";
 import Drafts from "./routes/drafts/drafts";
+import Draft_id from "./routes/draft_id/draft_id";
 import { Routes, Route, Link } from "react-router-dom";
 import { useEffect } from "react";
 import store from "./store";
@@ -68,6 +69,7 @@ function App() {
 					<Route path="login" element={<Login />} />
 					<Route path="register" element={<Register />} />
 					<Route path="drafts" element={<Drafts />} />
+					<Route path="draft/:slug" element={<Draft_id />} />
 				</Routes>
 			</main>
 		</div>
