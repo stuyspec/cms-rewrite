@@ -4,7 +4,7 @@ main {
 	height: 95vh;
 }
 
-#home_main * {
+#home_main {
 	width: 90vw;
 
 	margin: auto;

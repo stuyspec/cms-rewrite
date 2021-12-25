@@ -86,6 +86,27 @@ function Home() {
 	const isAdmin = useAppSelector((state) => state.isAdmin.value);
 	const isApproved = useAppSelector((state) => state.isApproved.value);
 
+	const approveUser = async (e: any) => {
+		e.preventDefault();
+		if (isAdmin) {
+			const uid = e.target.elements["uid"].value;
+			const r = await fetch(window.BASE_URL + "/api/auth/approve_user", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"auth-token": store.getState().validauthtoken.value,
+				},
+				body: JSON.stringify({ uid }),
+			});
+
+			const rjson = (await r.json()) as { success: boolean };
+			if (rjson.success) {
+				e.target.reset();
+			}
+		} else {
+			console.log("Non admins cannot approve users");
+		}
+	};
 	return (
 		<main id="home_main">
 			<h1>Home</h1>
@@ -101,6 +122,22 @@ function Home() {
 					)}
 					<p>Logged in!</p>
 					<p>Is admin: {String(isAdmin)}</p>
+					{isAdmin ? (
+						<div>
+							<h3>Approve a user:</h3>
+							<form onSubmit={approveUser}>
+								<input
+									type="text"
+									name="uid"
+									placeholder="UID"
+								/>
+								<br />
+								<input type="submit" />
+							</form>
+						</div>
+					) : (
+						<></>
+					)}
 				</div>
 			) : (
 				<div>
