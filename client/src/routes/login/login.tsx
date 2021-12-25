@@ -1,27 +1,44 @@
 import React from "react";
 import "./login.css";
 
-const login_handler: any = async (e: any) => {
-	e.preventDefault();
-	console.log(e);
-	const email = e.target.elements["email"].value;
-	const password = e.target.elements["password"].value;
-	console.log("Logging in", email, password);
+import { useAppSelector, useAppDispatch } from "../../hooks";
 
-	const r = await fetch("http://127.0.0.1:5678/api/auth/login", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({ email, password }),
-	});
+import { setToken } from "../../reducers/validAuthToken";
 
-	const rjson = await r.json();
-
-	console.log(rjson	);
-};
+interface LoginResponse {
+	token: string;
+	logged_in: boolean;
+	uid: string;
+}
 
 function Login() {
+	const dispatch = useAppDispatch();
+
+	const login_handler: any = async (e: any) => {
+		e.preventDefault();
+		console.log(e);
+		const email = e.target.elements["email"].value;
+		const password = e.target.elements["password"].value;
+		console.log("Logging in", email, password);
+
+		const r = await fetch("http://127.0.0.1:5678/api/auth/login", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ email, password }),
+		});
+
+		const rjson = (await r.json()) as LoginResponse;
+
+		if (rjson.logged_in) {
+			console.log("Logged in");
+			dispatch(setToken(rjson.token));
+			localStorage.setItem("auth_token", rjson.token);
+			window.location.replace("/");
+		}
+	};
+
 	return (
 		<div>
 			<h1>Login</h1>
