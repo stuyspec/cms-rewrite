@@ -21,7 +21,7 @@ function Register() {
 		const password = e.target.elements["password"].value;
 		const name = e.target.elements["name"].value;
 
-		const r = await fetch("http://127.0.0.1:5678/api/auth/register", {
+		const r = await fetch(window.BASE_URL + "/api/auth/register", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

@@ -21,7 +21,7 @@ function Login() {
 		const password = e.target.elements["password"].value;
 		console.log("Logging in", email, password);
 
-		const r = await fetch("http://127.0.0.1:5678/api/auth/login", {
+		const r = await fetch(window.BASE_URL + "/api/auth/login", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

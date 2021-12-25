@@ -16,6 +16,12 @@ interface ValidatorResponse {
 	uid: string;
 }
 
+declare global {
+	interface Window {
+		BASE_URL: string;
+	}
+}
+
 function App() {
 	useEffect(() => {
 		// Using an IIFE
@@ -26,7 +32,7 @@ function App() {
 			if (saved_auth_token) {
 				console.log("Saved auth token: ", saved_auth_token);
 				const r = await fetch(
-					"http://127.0.0.1:5678/api/auth/verify/" + saved_auth_token,
+					window.BASE_URL + "/api/auth/verify/" + saved_auth_token,
 					{
 						method: "GET",
 						headers: {},
@@ -41,6 +47,15 @@ function App() {
 			}
 		})();
 	});
+
+	if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
+		console.log("Dev");
+		window.BASE_URL = "http://127.0.0.1:5678";
+	} else {
+		console.log("Production");
+		window.BASE_URL = "https://stuyspeccmsbackend.herokuapp.com";
+	}
+
 	return (
 		<div>
 			<Navbar />
