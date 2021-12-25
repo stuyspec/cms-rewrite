@@ -73,7 +73,6 @@ router.post("/get_drafts", get_drafts_handler);
 
 router.post("/create_draft", async (req, res, next) => {
 	try {
-		console.log("Req.user: ", req.user);
 		const validation = draftValidation(req.body);
 		if ("error" in validation) {
 			throw new Error(validation.error.details[0].message);

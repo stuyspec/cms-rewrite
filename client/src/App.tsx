@@ -9,6 +9,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import { useEffect } from "react";
 import store from "./store";
 import { setToken } from "./reducers/validAuthToken";
+import { setIsAdmin } from "./reducers/isAdmin";
 import { useAppSelector, useAppDispatch } from "./hooks";
 
 interface ValidatorResponse {
@@ -44,6 +45,7 @@ function App() {
 				if (rjson.valid) {
 					console.log(rjson);
 					store.dispatch(setToken(saved_auth_token));
+					store.dispatch(setIsAdmin(rjson.isAdmin));
 				}
 			}
 		})();
@@ -76,11 +78,21 @@ function Home() {
 	const validauthtoken = useAppSelector(
 		(state) => state.validauthtoken.value
 	);
+	const isAdmin = useAppSelector((state) => state.isAdmin.value);
 
 	return (
 		<main id="home_main">
 			<h1>Home</h1>
-			<p>Redux token: {validauthtoken}</p>
+			{validauthtoken ? (
+				<div>
+					<p>Logged in!</p>
+					<p>Is admin: {String(isAdmin)}</p>
+				</div>
+			) : (
+				<div>
+					<p>Not logged in. Please log in.</p>
+				</div>
+			)}
 		</main>
 	);
 }

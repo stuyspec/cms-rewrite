@@ -92,6 +92,7 @@ router.post("/login", async (req, res, next) => {
 			token: token,
 			logged_in: true,
 			uid: user._id,
+			is_admin: user.isAdmin,
 		});
 	} catch (error) {
 		next(error);

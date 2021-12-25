@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import validauthtokenReducer from "./reducers/validAuthToken";
+import isAdminReducer from "./reducers/isAdmin";
 
 const store = configureStore({
 	reducer: {
 		validauthtoken: validauthtokenReducer,
+		isAdmin: isAdminReducer,
 	},
 });
 

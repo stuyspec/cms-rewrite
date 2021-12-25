@@ -1,19 +1,13 @@
 import React from "react";
 import "./login.css";
-
-import { useAppSelector, useAppDispatch } from "../../hooks";
-
-import { setToken } from "../../reducers/validAuthToken";
-
 interface LoginResponse {
 	token: string;
 	logged_in: boolean;
 	uid: string;
+	is_admin: boolean;
 }
 
 function Login() {
-	const dispatch = useAppDispatch();
-
 	const login_handler: any = async (e: any) => {
 		e.preventDefault();
 		console.log(e);
@@ -32,9 +26,8 @@ function Login() {
 		const rjson = (await r.json()) as LoginResponse;
 
 		if (rjson.logged_in) {
-			dispatch(setToken(rjson.token));
 			localStorage.setItem("auth_token", rjson.token);
-			window.location.replace("/");
+			window.location.replace("/"); // dispatching done by /verify anyway
 		}
 	};
 
