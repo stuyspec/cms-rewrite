@@ -3,7 +3,9 @@ const User = require("../../model/User");
 const { registerValidation, loginValidation } = require("../../validation");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
+const checkIsAdmin = require("./checkisadmin");
+const verifyTokenMiddleware = require("./verifyTokenMiddleware");
+const isAdminMiddleware = require("./isAdminMiddleware");
 router.get("/", (req, res) => {
 	res.json({ message: "auth index" });
 });
@@ -117,10 +119,28 @@ router.get("/verify/:id", async (req, res, next) => {
 		next(error);
 	}
 });
-async function checkIsAdmin(uid) {
-	const user = await User.findById(uid);
-	return user.isAdmin;
-}
+router.post(
+	"/approve_user",
+	verifyTokenMiddleware,
+	isAdminMiddleware,
+	async (req, res, next) => {
+		try {
+			let uid = req.body.uid;
+
+			const success = await User.findByIdAndUpdate(
+				uid,
+				{ isApproved: true },
+				{ upsert: false }
+			);
+
+			res.json({
+				success: true,
+			});
+		} catch (error) {
+			next(error);
+		}
+	}
+);
 
 module.exports = {
 	router: router,

@@ -1,6 +1,4 @@
-const checkIsAdmin = require("./auth").checkIsAdmin;
-const jwt = require("jsonwebtoken");
-
+const checkIsAdmin = require("./checkisadmin");
 module.exports = async function (req, res, next) {
 	try {
 		const token = req.header("auth-token");

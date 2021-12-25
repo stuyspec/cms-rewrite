@@ -23,6 +23,10 @@ const userScheme = new mongoose.Schema({
 		type: Boolean,
 		default: false,
 	},
+	isApproved: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const userModel = mongoose.model("User", userScheme);
