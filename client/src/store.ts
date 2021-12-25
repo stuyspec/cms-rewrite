@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import counterReducer from "./reducers/validAuthToken";
+import validauthtokenReducer from "./reducers/validAuthToken";
 
 const store = configureStore({
 	reducer: {
-		counter: counterReducer,
+		validauthtoken: validauthtokenReducer,
 	},
 });
 

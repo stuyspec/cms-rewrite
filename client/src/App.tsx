@@ -53,7 +53,9 @@ function App() {
 }
 
 function Home() {
-	const validauthtoken = useAppSelector((state) => state.counter.value);
+	const validauthtoken = useAppSelector(
+		(state) => state.validauthtoken.value
+	);
 
 	return (
 		<main>

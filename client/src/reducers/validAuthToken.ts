@@ -1,17 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
-interface CounterState {
+interface ValidauthtokenState {
 	value: string;
 }
 
 // Define the initial state using that type
-const initialState: CounterState = {
+const initialState: ValidauthtokenState = {
 	value: "",
 };
 
-export const counterSlice = createSlice({
-	name: "counter",
+export const validauthtokenSlice = createSlice({
+	name: "validauthtoken",
 	initialState: initialState,
 	reducers: {
 		setToken: (state, action) => {
@@ -21,6 +21,6 @@ export const counterSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setToken } = counterSlice.actions;
+export const { setToken } = validauthtokenSlice.actions;
 
-export default counterSlice.reducer;
+export default validauthtokenSlice.reducer;

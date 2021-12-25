@@ -14,7 +14,9 @@ async function signOut() {
 }
 
 function Navbar() {
-	const validauthtoken = useAppSelector((state) => state.counter.value);
+	const validauthtoken = useAppSelector(
+		(state) => state.validauthtoken.value
+	);
 	return (
 		<div className="App">
 			<nav>
