@@ -45,6 +45,7 @@ router.post("/register", async (req, res, next) => {
 		res.header("auth-token", token).send({
 			token: token,
 			logged_in: true,
+			uid: savedUser._id,
 		});
 	} catch (error) {
 		next(error);

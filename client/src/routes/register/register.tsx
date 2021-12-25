@@ -1,35 +1,35 @@
 import React from "react";
-import "./login.css";
+import "./register.css";
 
 import { useAppSelector, useAppDispatch } from "../../hooks";
 
 import { setToken } from "../../reducers/validAuthToken";
 
-interface LoginResponse {
+interface RegisterResponse {
 	token: string;
 	logged_in: boolean;
 	uid: string;
 }
 
-function Login() {
+function Register() {
 	const dispatch = useAppDispatch();
 
-	const login_handler: any = async (e: any) => {
+	const register_handler: any = async (e: any) => {
 		e.preventDefault();
 		console.log(e);
 		const email = e.target.elements["email"].value;
 		const password = e.target.elements["password"].value;
-		console.log("Logging in", email, password);
+		const name = e.target.elements["name"].value;
 
-		const r = await fetch("http://127.0.0.1:5678/api/auth/login", {
+		const r = await fetch("http://127.0.0.1:5678/api/auth/register", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ email, password }),
+			body: JSON.stringify({ email, password, name }),
 		});
 
-		const rjson = (await r.json()) as LoginResponse;
+		const rjson = (await r.json()) as RegisterResponse;
 
 		if (rjson.logged_in) {
 			dispatch(setToken(rjson.token));
@@ -40,8 +40,15 @@ function Login() {
 
 	return (
 		<div>
-			<h1>Login</h1>
-			<form onSubmit={login_handler} id="login_form">
+			<h1>Register</h1>
+			<form onSubmit={register_handler} id="register_form">
+				<input
+					placeholder="Full name"
+					type="text"
+					id="name_form"
+					name="name"
+				/>
+				<br />
 				<input
 					placeholder="Email"
 					type="email"
@@ -62,4 +69,4 @@ function Login() {
 	);
 }
 
-export default Login;
+export default Register;
