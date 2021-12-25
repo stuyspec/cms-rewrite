@@ -32,7 +32,7 @@ const apiRouter = require("./routes/api").router;
 //Routes Middleware
 app.use("/api/", apiRouter);
 app.get("/", function (req, res) {
-	res.send("Hello World");
+	res.send("Hello World to the backend");
 });
 
 // Configure a middleware for 404s and the error handler
