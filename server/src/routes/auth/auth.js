@@ -3,7 +3,6 @@ const User = require("../../model/User");
 const { registerValidation, loginValidation } = require("../../validation");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const checkIsAdmin = require("./checkisadmin");
 const verifyTokenMiddleware = require("./verifyTokenMiddleware");
 const isAdminMiddleware = require("./isAdminMiddleware");
 router.get("/", (req, res) => {
@@ -95,6 +94,7 @@ router.post("/login", async (req, res, next) => {
 			logged_in: true,
 			uid: user._id,
 			is_admin: user.isAdmin,
+			isApproved: user.isApproved,
 		});
 	} catch (error) {
 		next(error);
@@ -108,12 +108,15 @@ router.get("/verify/:id", async (req, res, next) => {
 		console.log(verified);
 		const uid = verified._id;
 
-		const userisAdmin = await checkIsAdmin(uid);
-
+		const user = await User.findById(uid);
+		if (!user) {
+			throw new Error("User with that token doesn't exist");
+		}
 		res.json({
 			valid: true,
-			isAdmin: userisAdmin,
+			isAdmin: user.isAdmin,
 			uid: uid,
+			isApproved: user.isApproved,
 		});
 	} catch (error) {
 		next(error);
@@ -144,5 +147,4 @@ router.post(
 
 module.exports = {
 	router: router,
-	checkIsAdmin: checkIsAdmin,
 };
