@@ -1,26 +1,26 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
-interface IsAdminState {
+interface IsApprovedState {
 	value: boolean;
 }
 
 // Define the initial state using that type
-const initialState: IsAdminState = {
+const initialState: IsApprovedState = {
 	value: false,
 };
 
-export const isAdminSlice = createSlice({
-	name: "isAdmin",
+export const isApprovedSlice = createSlice({
+	name: "isApproved",
 	initialState: initialState,
 	reducers: {
-		setIsAdmin: (state, action: { type: string; payload: boolean }) => {
+		setIsApproved: (state, action: { type: string; payload: boolean }) => {
 			state.value = action.payload;
 		},
 	},
 });
 
 // Action creators are generated for each case reducer function
-export const { setIsAdmin } = isAdminSlice.actions;
+export const { setIsApproved } = isApprovedSlice.actions;
 
-export default isAdminSlice.reducer;
+export default isApprovedSlice.reducer;

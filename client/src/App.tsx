@@ -11,11 +11,13 @@ import { useEffect } from "react";
 import store from "./store";
 import { setToken } from "./reducers/validAuthToken";
 import { setIsAdmin } from "./reducers/isAdmin";
+import { setIsApproved } from "./reducers/isApproved";
 import { useAppSelector, useAppDispatch } from "./hooks";
 
 interface ValidatorResponse {
 	valid: boolean;
 	isAdmin: boolean;
+	isApproved: boolean;
 	uid: string;
 }
 
@@ -47,6 +49,7 @@ function App() {
 					console.log(rjson);
 					store.dispatch(setToken(saved_auth_token));
 					store.dispatch(setIsAdmin(rjson.isAdmin));
+					store.dispatch(setIsApproved(rjson.isApproved));
 				}
 			}
 		})();
@@ -81,12 +84,21 @@ function Home() {
 		(state) => state.validauthtoken.value
 	);
 	const isAdmin = useAppSelector((state) => state.isAdmin.value);
+	const isApproved = useAppSelector((state) => state.isApproved.value);
 
 	return (
 		<main id="home_main">
 			<h1>Home</h1>
 			{validauthtoken ? (
 				<div>
+					{!isApproved ? (
+						<h1>
+							YOU NEED TO REQUEST ACCOUNT VERIFICATION FROM A STUY
+							SPEC ADMIN
+						</h1>
+					) : (
+						<></>
+					)}
 					<p>Logged in!</p>
 					<p>Is admin: {String(isAdmin)}</p>
 				</div>
