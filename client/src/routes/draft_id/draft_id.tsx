@@ -46,25 +46,28 @@ function Drafts() {
 
 	const submitEdit = async () => {
 		console.log("Submit edit");
-		const volume = document.getElementById("volume")?.innerText;
-		const issue = document.getElementById("issue")?.innerText;
-		const title = document.getElementById("title")?.innerText;
-		const contributors_str =
-			document.getElementById("contributors")?.innerText;
-		const cover_image_contributor = document.getElementById(
-			"cover_image_contributor"
-		)?.innerText;
-		const text = document.getElementById("text")?.innerText;
+		const volume = (document.getElementById("volume") as any)?.value;
+		const issue = (document.getElementById("issue") as any)?.value;
+		const title = (document.getElementById("title") as any)?.value;
+		const contributors_str = (
+			document.getElementById("contributors") as any
+		)?.value;
+		const cover_image_contributor = (
+			document.getElementById("cover_image_contributor") as any
+		)?.value;
+		const text = (document.getElementById("text") as any)?.value;
 
-		let contributors = contributors_str ? contributors_str.split(",") : [];
+		let contributors: string[] = contributors_str
+			? contributors_str.split(",")
+			: [];
 		contributors = contributors.map((v) => v.trim());
 
 		const send = {
 			volume,
 			issue,
 			title,
-			contributors,
-			cover_image_contributors: contributors,
+			contributors: contributors,
+			cover_image_contributor: cover_image_contributor,
 			text,
 		};
 
@@ -106,60 +109,45 @@ function Drafts() {
 					<div id="draft_data">
 						<h2>
 							Volume:&nbsp;
-							<span
-								suppressContentEditableWarning={true}
-								contentEditable
+							<input
+								type="number"
 								id="volume"
-							>
-								{draft.volume}
-							</span>
+								defaultValue={draft.volume}
+							/>
 							&nbsp;|&nbsp; Issue:&nbsp;
-							<span
-								suppressContentEditableWarning={true}
-								contentEditable
+							<input
+								type="number"
 								id="issue"
-							>
-								{draft.issue}
-							</span>
+								defaultValue={draft.issue}
+							/>
 						</h2>
 						<h2>
 							Draft title:&nbsp;
-							<span
-								suppressContentEditableWarning={true}
-								contentEditable
+							<input
+								type="text"
 								id="title"
-							>
-								{draft.title}
-							</span>
+								defaultValue={draft.title}
+							/>
 						</h2>
 						<h3>
 							Draft authors:&nbsp;
-							<span
-								suppressContentEditableWarning={true}
-								contentEditable
+							<textarea
 								id="contributors"
-							>
-								{genFormattedContributors(draft.contributors)}
-							</span>
+								defaultValue={genFormattedContributors(
+									draft.contributors
+								)}
+							/>
 						</h3>
 						<img className="cover_image" src={draft.cover_image} />
 						<h3>
 							Image by&nbsp;
-							<span
-								suppressContentEditableWarning={true}
-								contentEditable
+							<input
+								type="text"
 								id="cover_image_contributor"
-							>
-								{draft.cover_image_contributor}
-							</span>
+								defaultValue={draft.cover_image_contributor}
+							/>
 						</h3>
-						<div
-							suppressContentEditableWarning={true}
-							contentEditable
-							id="text"
-						>
-							{draft.text}
-						</div>
+						<textarea id="text" defaultValue={draft.text} />
 					</div>
 					<button onClick={submitEdit}>Submit the edit</button>
 				</div>
