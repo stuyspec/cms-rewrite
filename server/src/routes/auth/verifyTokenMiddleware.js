@@ -16,7 +16,7 @@ module.exports = async function (req, res, next) {
 		if (!fromDB.isApproved) {
 			throw new Error("The user has not been approved");
 		}
-		req.user = verified;
+		req.user = fromDB;
 		next();
 	} catch (error) {
 		next(error);

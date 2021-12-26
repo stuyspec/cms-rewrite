@@ -3,6 +3,7 @@ const isAdminMiddleware = require("../auth/isAdminMiddleware");
 const router = require("express").Router();
 const Article = require("../../model/Article");
 const Draft = require("../../model/Draft");
+const User = require("../../model/User");
 const { draftValidation } = require("../../validation");
 
 router.use(verifyTokenMiddlware);
@@ -86,7 +87,55 @@ router.post("/create_draft", async (req, res, next) => {
 		next(error);
 	}
 });
+const editMiddleware = async function (req, res, next) {
+	try {
+		if (!req.user.isApproved) {
+			throw new Error("User has not been verified.");
+		}
 
+		if (!req?.body?.draft_id) {
+			throw new Error("draft_id not specified in request body");
+		}
+
+		const draft = await Draft.findById(req.body.draft_id);
+		if (!draft) {
+			throw new Error("Draft with that id does not exist");
+		}
+
+		req.draft = draft;
+		console.log("Req user", req.user);
+		if (req.user.isAdmin) {
+			next();
+			return;
+		} else {
+			const draft_owner = draft.drafter_id;
+			if (draft_owner == req.user._id) {
+				next();
+				return;
+			}
+		}
+
+		throw new Error(
+			"User must be an admin or the user must own this draft."
+		);
+	} catch (error) {
+		next(error);
+	}
+};
+
+router.put("/update_draft", editMiddleware, async (req, res, next) => {
+	try {
+		if (!req.body.update) {
+			throw new Error("update object not specified in request body");
+		}
+		await Draft.findByIdAndUpdate(req.body.draft_id, req.body.update, {
+			upsert: false,
+		});
+		res.json({ message: "Updated" });
+	} catch (error) {
+		next(error);
+	}
+});
 async function create_draft(query, uid) {
 	let draft = await Draft.create({ ...query, drafter_id: uid });
 	let saved_draft = await draft.save();
