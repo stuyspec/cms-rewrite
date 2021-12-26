@@ -6,3 +6,8 @@
 	width: 80vw;
 	margin: auto;
 }
+
+*[contentEditable] {
+	color: rgb(30, 0, 255);
+	border: 1px solid gray;
+}

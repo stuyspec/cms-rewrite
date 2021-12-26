@@ -131,7 +131,7 @@ router.put("/update_draft", editMiddleware, async (req, res, next) => {
 		await Draft.findByIdAndUpdate(req.body.draft_id, req.body.update, {
 			upsert: false,
 		});
-		res.json({ message: "Updated" });
+		res.json({ success: true });
 	} catch (error) {
 		next(error);
 	}
