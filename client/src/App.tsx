@@ -6,6 +6,7 @@ import Login from "./routes/login/login";
 import Register from "./routes/register/register";
 import Drafts from "./routes/drafts/drafts";
 import Draft_id from "./routes/draft_id/draft_id";
+import Create_draft from "./routes/create_draft/create_draft";
 import { Routes, Route, Link } from "react-router-dom";
 import { useEffect } from "react";
 import store from "./store";
@@ -75,6 +76,7 @@ function App() {
 					<Route path="register" element={<Register />} />
 					<Route path="drafts" element={<Drafts />} />
 					<Route path="draft/:slug" element={<Draft_id />} />
+					<Route path="create_draft" element={<Create_draft />} />
 				</Routes>
 			</main>
 		</div>
@@ -142,6 +144,8 @@ function Home() {
 					) : (
 						<></>
 					)}
+
+					<Link to="/create_draft">Create a Draft</Link>
 				</div>
 			) : (
 				<div>
