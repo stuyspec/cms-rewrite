@@ -3,8 +3,8 @@ const isAdminMiddleware = require("../auth/isAdminMiddleware");
 const router = require("express").Router();
 const Article = require("../../model/Article");
 const Draft = require("../../model/Draft");
-const User = require("../../model/User");
 const { draftValidation } = require("../../validation");
+const sharp = require("sharp");
 
 router.use(verifyTokenMiddlware);
 // Base route
@@ -158,4 +158,28 @@ async function get_drafts_handler(req, res, next) {
 	}
 }
 
+router.post("/upload_media", async (req, res, next) => {
+	try {
+		if (!req.files) {
+			throw new Error("No files included");
+		} else {
+			//Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
+			let file = req.files.file;
+			let s = sharp(file.data);
+			let { height: h, width: w } = await getHeightandWidth(s);
+			s.resize(500, Math.round(h * (500 / w)));
+
+			res.json({ message: "Uploaded?" });
+		}
+	} catch (error) {
+		next(error);
+	}
+});
+
+async function getHeightandWidth(s) {
+	const m = await s.metadata();
+	const height = m.height;
+	const width = m.width;
+	return { height, width };
+}
 module.exports.router = router;

@@ -5,11 +5,16 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const dotenv = require("dotenv").config();
 const middlewares = require("./middlewares");
+const fileUpload = require("express-fileupload");
 const app = express();
-
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(
+	fileUpload({
+		createParentPath: true,
+	})
+);
 app.use(helmet());
 app.use(morgan("tiny"));
 
