@@ -81,6 +81,7 @@ router.post("/create_draft", async (req, res, next) => {
 		if ("error" in validation) {
 			throw new Error(validation.error.details[0].message);
 		}
+
 		const saved_draft = await create_draft(req.body, req.user._id);
 		res.json({
 			draft: saved_draft,
@@ -140,7 +141,12 @@ router.put("/update_draft", editMiddleware, async (req, res, next) => {
 	}
 });
 async function create_draft(query, uid) {
-	let draft = await Draft.create({ ...query, drafter_id: uid });
+	const slug = encodeURIComponent(
+		String(query.title).toLowerCase().replace(" ", "-")
+	);
+
+	console.log("Slug: ", slug);
+	let draft = await Draft.create({ ...query, drafter_id: uid, slug: slug });
 	let saved_draft = await draft.save();
 	return saved_draft;
 }

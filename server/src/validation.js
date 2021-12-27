@@ -30,7 +30,6 @@ const draftValidation = (data) => {
 	const schema = Joi.object({
 		text: Joi.string().required(),
 		title: Joi.string().min(6).max(512).required(),
-		slug: Joi.string().min(6).max(512).lowercase().required(),
 		contributors: Joi.array().items(Joi.string()).required(),
 		volume: Joi.number().min(111).required(),
 		issue: Joi.number().min(0).max(365).required(),
