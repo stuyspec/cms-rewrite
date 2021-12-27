@@ -5,6 +5,9 @@ const Article = require("../../model/Article");
 const Draft = require("../../model/Draft");
 const { draftValidation } = require("../../validation");
 const sharp = require("sharp");
+const s3 = require("../../aws");
+
+const uuidv1 = require("uuid").v1;
 
 router.use(verifyTokenMiddlware);
 // Base route
@@ -169,7 +172,21 @@ router.post("/upload_media", async (req, res, next) => {
 			let { height: h, width: w } = await getHeightandWidth(s);
 			s.resize(500, Math.round(h * (500 / w)));
 
-			res.json({ message: "Uploaded?" });
+			const sbuffer = await s.toBuffer();
+
+			const fname = process.env.MEDIA_DIR + "/" + uuidv1() + ".jpg";
+			// Setting up S3 upload parameters
+			const params = {
+				Bucket: process.env.BUCKET_NAME,
+				Key: fname, // File name you want to save as in S3
+				Body: sbuffer,
+				ContentType: "image/jpg",
+			};
+
+			// Uploading files to the bucket
+			const upData = await s3.upload(params).promise();
+
+			res.json({ success: true, public_url: upData.Location });
 		}
 	} catch (error) {
 		next(error);
