@@ -129,6 +129,7 @@ function Create_Draft() {
 					Section:&nbsp;
 					<input type="text" id="new_section" />
 				</h3>
+				<h3>The article text:</h3>
 				<textarea id="new_text" />
 				<input onClick={new_draft_handler} type="submit"></input>
 			</div>

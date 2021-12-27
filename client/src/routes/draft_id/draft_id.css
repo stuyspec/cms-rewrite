@@ -17,3 +17,7 @@
 	width: 100%;
 	height: 70vh;
 }
+
+#draft_data #cover_image {
+	width: 500px;
+}
