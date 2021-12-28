@@ -30,8 +30,9 @@ function Create_Draft() {
 		const text: string = (document.getElementById("new_text") as any).value;
 		const summary: string = (document.getElementById("new_summary") as any)
 			.value;
-		const section: string = (document.getElementById("new_section") as any)
-			.value;
+		const section_id: number = (
+			document.getElementById("new_section") as any
+		).value;
 
 		const body = {
 			title: title,
@@ -39,7 +40,7 @@ function Create_Draft() {
 			text: text,
 			volume: volume,
 			issue: issue,
-			section: section,
+			section_id: section_id,
 			summary: summary,
 			cover_image: coverImageURL,
 			cover_image_contributor: cover_image_contributor,
@@ -115,10 +116,18 @@ function Create_Draft() {
 					Summary: &nbsp;
 					<textarea id="new_summary" />
 				</h3>
-				<h3>
-					Section:&nbsp;
-					<input type="text" id="new_section" />
-				</h3>
+				<h3>Section:&nbsp;</h3>
+				<select id="new_section">
+					<option value="0">News</option>
+					<option value="1">Features</option>
+					<option value="2">Opinions</option>
+					<option value="3">Science</option>
+					<option value="4">Humor</option>
+					<option value="5">Sports</option>
+					<option value="6">Arts and Entertainment</option>
+					<option value="7">Media</option>
+					<option value="8">Spec+</option>
+				</select>
 				<h3>The article text:</h3>
 				<textarea id="new_text" />
 				<input onClick={new_draft_handler} type="submit"></input>

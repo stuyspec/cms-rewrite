@@ -61,7 +61,8 @@ function Drafts() {
 			: [];
 		contributors = contributors.map((v) => v.trim());
 
-		const section = (document.getElementById("edit_section") as any)?.value;
+		const section_id = (document.getElementById("edit_section") as any)
+			?.value;
 		const summary = (document.getElementById("edit_summary") as any)?.value;
 
 		const cover_image_to_use = coverImageURL
@@ -74,7 +75,7 @@ function Drafts() {
 			contributors: contributors,
 			cover_image_contributor: cover_image_contributor,
 			text,
-			section,
+			section_id,
 			summary,
 			cover_image: cover_image_to_use,
 		};
@@ -189,11 +190,22 @@ function Drafts() {
 						<textarea id="text" defaultValue={draft.text} />
 						<h3>
 							Section:&nbsp;
-							<input
-								type="text"
-								defaultValue={draft.section}
+							<select
 								id="edit_section"
-							/>
+								defaultValue={draft.section_id}
+							>
+								<option value="0">News</option>
+								<option value="1">Features</option>
+								<option value="2">Opinions</option>
+								<option value="3">Science</option>
+								<option value="4">Humor</option>
+								<option value="5">Sports</option>
+								<option value="6">
+									Arts and Entertainment
+								</option>
+								<option value="7">Media</option>
+								<option value="8">Spec+</option>
+							</select>
 						</h3>
 						<h3>
 							Summary: &nbsp;

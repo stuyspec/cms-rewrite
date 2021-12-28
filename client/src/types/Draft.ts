@@ -6,7 +6,7 @@ export default interface Draft {
 	contributors: string[];
 	volume: number;
 	issue: number;
-	section: string;
+	section_id: number;
 	summary: string;
 	cover_image: string;
 	cover_image_contributor: string;
