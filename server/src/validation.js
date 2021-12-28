@@ -33,7 +33,7 @@ const draftValidation = (data) => {
 		contributors: Joi.array().items(Joi.string()).required(),
 		volume: Joi.number().min(111).required(),
 		issue: Joi.number().min(0).max(365).required(),
-		section: Joi.string().required(),
+		section_id: Joi.number().min(0).max(20).required(),
 		summary: Joi.string().required(),
 		cover_image: Joi.string().uri().required(),
 		cover_image_contributor: Joi.string().max(128).required(),

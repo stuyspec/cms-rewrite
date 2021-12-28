@@ -25,9 +25,9 @@ const draftSchema = new mongoose.Schema({
 		required: true,
 		type: Number,
 	},
-	section: {
+	section_id: {
 		required: true,
-		type: String,
+		type: Number,
 	},
 	summary: {
 		required: true,
