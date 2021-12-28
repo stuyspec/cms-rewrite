@@ -15,36 +15,7 @@ interface CreateDraftResponse {
 }
 
 function Create_Draft() {
-  const [value, setValue] = useState("");
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
-      ],
-      ["link", "image"],
-      ["clean"],
-    ],
-  };
-
-  const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-  ];
   const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
 
   const new_draft_handler = async () => {
