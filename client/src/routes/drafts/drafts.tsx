@@ -41,11 +41,10 @@ function Drafts() {
 		})();
 	});
 
-	return (
-		<div>
-			<h1>All drafts:</h1>
-
-			{drafts != null ? (
+	let genDrafts: any = <></>;
+	if (drafts != null) {
+		genDrafts =
+			drafts.length > 0 ? (
 				drafts.map((item, _) => (
 					<div className="draft_quickview" key={item._id}>
 						<Link to={"/draft/" + item._id}>
@@ -62,8 +61,14 @@ function Drafts() {
 					</div>
 				))
 			) : (
-				<></>
-			)}
+				<h2>There have been no drafts!</h2>
+			);
+	}
+
+	return (
+		<div>
+			<h1>All drafts:</h1>
+			{genDrafts}
 		</div>
 	);
 }
