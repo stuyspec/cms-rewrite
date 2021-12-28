@@ -125,6 +125,27 @@ function Drafts() {
 		}
 	};
 
+	const publishDraft = async () => {
+		console.log("Publish Draft");
+		const r = await fetch(window.BASE_URL + "/api/db/publish_article", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"auth-token": store.getState().validauthtoken.value,
+			},
+			body: JSON.stringify({ draft_id: draft?._id }),
+		});
+
+		const rjson = await r.json();
+		if (rjson.article) {
+			window.open(
+				"https://stuyspecrewrite.vercel.app/article/" +
+					rjson.article.slug
+			);
+			window.location.replace("/drafts");
+		}
+	};
+
 	return (
 		<div>
 			<h2>Draft id: {draft_id}</h2>
@@ -224,6 +245,8 @@ function Drafts() {
 					>
 						Delete
 					</button>
+					<br />
+					<button onClick={publishDraft}>Publish</button>
 				</div>
 			) : (
 				<div></div>
