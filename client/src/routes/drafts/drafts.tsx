@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import store from "../../store";
 import Draft from "../../types/Draft";
+import deleteDraft from "../../helpers/delete_draft";
 
 interface DraftsResponse {
 	drafts: Draft[];
@@ -46,10 +47,19 @@ function Drafts() {
 
 			{drafts != null ? (
 				drafts.map((item, _) => (
-					<Link key={item._id} to={"/draft/" + item._id}>
-						<h2>{item.title}</h2>
-						<h3>{item.summary}</h3>
-					</Link>
+					<div className="draft_quickview" key={item._id}>
+						<Link to={"/draft/" + item._id}>
+							<h2>{item.title}</h2>
+							<h3>{item.summary}</h3>
+						</Link>
+						<button
+							onClick={() => {
+								deleteDraft(item._id);
+							}}
+						>
+							Delete
+						</button>
+					</div>
 				))
 			) : (
 				<></>

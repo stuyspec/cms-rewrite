@@ -140,6 +140,15 @@ router.put("/update_draft", editMiddleware, async (req, res, next) => {
 		next(error);
 	}
 });
+
+router.delete("/delete_draft", editMiddleware, async (req, res, next) => {
+	try {
+		await Draft.findByIdAndDelete(req.draft._id);
+		res.json({ success: true });
+	} catch (error) {
+		next(error);
+	}
+});
 async function create_draft(query, uid) {
 	const slug = encodeURIComponent(
 		String(query.title).toLowerCase().replace(" ", "-")

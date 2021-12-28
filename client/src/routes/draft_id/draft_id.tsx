@@ -5,6 +5,7 @@ import store from "../../store";
 import Draft from "../../types/Draft";
 import upload_image_helper from "../../helpers/upload_image";
 import { useParams } from "react-router-dom";
+import deleteDraft from "../../helpers/delete_draft";
 
 interface DraftsResponse {
 	drafts: Draft[];
@@ -216,6 +217,13 @@ function Drafts() {
 						</h3>
 					</div>
 					<button onClick={submitEdit}>Submit the edit</button>
+					<button
+						onClick={() => {
+							deleteDraft(draft._id);
+						}}
+					>
+						Delete
+					</button>
 				</div>
 			) : (
 				<div></div>
