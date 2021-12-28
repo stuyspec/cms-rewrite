@@ -3,18 +3,16 @@ import "./create_draft.css";
 import { useEffect, useState } from "react";
 import Draft from "../../types/Draft";
 import store from "../../store";
-
-let coverImageURL = "";
+import upload_image_helper from "../../helpers/upload_image";
 
 interface CreateDraftResponse {
 	draft: Draft;
 	description: string;
 }
-interface UploadCoverImageResponse {
-	success: boolean;
-	public_url: string;
-}
+
 function Create_Draft() {
+	const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
+
 	const new_draft_handler = async () => {
 		console.log("Create new draft");
 		const volume: string = (document.getElementById("new_volume") as any)
@@ -62,6 +60,7 @@ function Create_Draft() {
 			window.location.replace("/draft/" + rjson.draft._id);
 		}
 	};
+
 	const upload_cover_image = async () => {
 		// In case event listener remains, or is triggered manually, etc
 		const uploaded_files = (
@@ -69,25 +68,10 @@ function Create_Draft() {
 		).files;
 		if (uploaded_files.length > 0) {
 			const uploaded_file = uploaded_files[0]; // always grab first
-			const formData = new FormData();
-			formData.append("file", uploaded_file);
-			const uploaded_response = await fetch(
-				window.BASE_URL + "/api/db/upload_media",
-				{
-					method: "POST",
-					body: formData,
-					headers: {
-						"auth-token": store.getState().validauthtoken.value,
-					},
-				}
-			);
-			const uploaded_json =
-				(await uploaded_response.json()) as UploadCoverImageResponse;
-
-			if (uploaded_json.success) {
-				console.log("Uploaded URL", uploaded_json.public_url);
-				coverImageURL = uploaded_json.public_url;
-			}
+			const public_url = (await upload_image_helper(
+				uploaded_file
+			)) as string;
+			setCoverImageURL(public_url);
 		}
 	};
 
@@ -117,6 +101,12 @@ function Create_Draft() {
 					/>
 					<button onClick={upload_cover_image}>Upload Image</button>
 				</div>
+				{coverImageURL ? (
+					<img id="cover_image" src={coverImageURL} />
+				) : (
+					<></>
+				)}
+
 				<h3>
 					Image by&nbsp;
 					<input type="text" id="new_cover_image_contributor" />

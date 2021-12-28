@@ -3,11 +3,8 @@ import "./draft_id.css";
 import { useEffect, useState } from "react";
 import store from "../../store";
 import Draft from "../../types/Draft";
-
-import {
-	// rest of the elements/components imported remain same
-	useParams,
-} from "react-router-dom";
+import upload_image_helper from "../../helpers/upload_image";
+import { useParams } from "react-router-dom";
 
 interface DraftsResponse {
 	drafts: Draft[];
@@ -30,6 +27,8 @@ function genFormattedContributors(contributors: string[]) {
 function Drafts() {
 	const { slug: draft_id } = useParams();
 	const [draft, setDraft] = useState<Draft | null>(null);
+	const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
+
 	const fetchDraft = async () => {
 		const r = await fetch(window.BASE_URL + "/api/db/get_drafts", {
 			method: "POST",
@@ -64,6 +63,10 @@ function Drafts() {
 
 		const section = (document.getElementById("edit_section") as any)?.value;
 		const summary = (document.getElementById("edit_summary") as any)?.value;
+
+		const cover_image_to_use = coverImageURL
+			? coverImageURL
+			: draft?.cover_image;
 		const send = {
 			volume,
 			issue,
@@ -73,6 +76,7 @@ function Drafts() {
 			text,
 			section,
 			summary,
+			cover_image: cover_image_to_use,
 		};
 
 		const r = await fetch(window.BASE_URL + "/api/db/update_draft", {
@@ -104,6 +108,20 @@ function Drafts() {
 			}
 		})();
 	});
+	const upload_cover_image = async () => {
+		// In case event listener remains, or is triggered manually, etc
+		const uploaded_files = (
+			document.getElementById("upload_cover_image") as any
+		).files;
+		if (uploaded_files.length > 0) {
+			const uploaded_file = uploaded_files[0]; // always grab first
+			const public_url = (await upload_image_helper(
+				uploaded_file
+			)) as string;
+			console.log(public_url);
+			setCoverImageURL(public_url);
+		}
+	};
 
 	return (
 		<div>
@@ -142,7 +160,24 @@ function Drafts() {
 								)}
 							/>
 						</h3>
-						<img id="cover_image" src={draft.cover_image} />
+						<img
+							id="cover_image"
+							src={
+								coverImageURL
+									? coverImageURL
+									: draft.cover_image
+							}
+						/>
+						<div>
+							<input
+								type="file"
+								accept="image/png, image/jpg, image/jpeg"
+								id="upload_cover_image"
+							/>
+							<button onClick={upload_cover_image}>
+								Edit Image
+							</button>
+						</div>
 						<h3>
 							Image by&nbsp;
 							<input
