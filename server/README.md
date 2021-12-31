@@ -16,23 +16,33 @@ This app is protected with a firewall, helmet, and most importantly, the authent
 
 The authentication for if a user is logged in or has admin privileges is handled by JWT, or json web tokens.
 
-For example, to access any database information (through an api route, you must pass in a valid JWT (JSONWEBTOKEN) auth-token from a user in the auth-token request header.
+For example, to access any database information (through an api route, you must pass in a valid JWT (JSONWEBTOKEN) auth-token from a **APPROVED** user in the auth-token request header.
+
+Anyone can create an account, but for ANY (even basic) permissions, the user must be approved by an admin.
 
 ## Data
 
 Every mongoose "model" is stored in the models folder.
 
-There are 3 collections, one for storing users, one for storing articles,and one for drafts
+There are 3 collections, one for storing users, one for storing articles, and one for drafts
 
-Every draft is tied to the user that drafted it, through a field called uid (user id).
+Every draft is tied to the user that drafted it, through a field called drafter_id (the creator's uid or \_id).
 
 ## _.env_ specifications
 
-MONGODB_URI is the connection uri to mongodb
+`MONGODB_URI` is the connection uri to mongodb
 
-PORT is the port to run the server on
+`PORT` is the port to run the server on
 
-ACCESS_TOKEN_SECRET is the encryption private used to create and verify json web tokens.
+`ACCESS_TOKEN_SECRET` is the encryption private key used to create and verify json web tokens.
+
+`AWS_ACCESS_ID` is the access id for the s3 bucket used
+
+`AWS_ACCESS_SECRET` is the accompanying secret for the `AWS_ACCESS_ID`
+
+`BUCKET_NAME` is the name of the s3 bucket
+
+`MEDIA_DIR` is the subfolder of the s3 bucket to use for storage
 
 ## **EXAMPLE .env**
 
@@ -40,4 +50,8 @@ ACCESS_TOKEN_SECRET is the encryption private used to create and verify json web
 DB_CONNECT=mongodb+srv://url_location/db_name?retryWrites=true&w=majority
 PORT=4201
 ACCESS_TOKEN_SECRET=EncryptionPrivateKey
+AWS_ACCESS_ID=AnIDcreatedByAuserTiedToAuser
+AWS_ACCESS_SECRET=theSecret
+BUCKET_NAME=MyMedia
+MEDIA_DIR=media_images
 ```
