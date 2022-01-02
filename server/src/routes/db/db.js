@@ -151,7 +151,7 @@ router.delete("/delete_draft", editMiddleware, async (req, res, next) => {
 });
 async function create_draft(query, uid) {
 	const slug = encodeURIComponent(
-		String(query.title).toLowerCase().replace(" ", "-")
+		String(query.title).toLowerCase().replace(new RegExp(" ", "g"), "-")
 	);
 
 	console.log("Slug: ", slug);
