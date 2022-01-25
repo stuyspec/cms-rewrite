@@ -21,3 +21,5 @@ __pycache__/
 
 .env.*
 **/yarn.lock
+
+.vercel
