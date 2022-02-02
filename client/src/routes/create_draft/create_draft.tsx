@@ -57,7 +57,7 @@ function Create_Draft() {
 		};
 		if (coverImageURL) {
 			console.log({ body });
-			const r = await fetch("http://127.0.0.1:5678/api/db/create_draft", {
+			const r = await fetch(window.BASE_URL + "/api/db/create_draft", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
