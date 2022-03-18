@@ -150,9 +150,10 @@ router.delete("/delete_draft", editMiddleware, async (req, res, next) => {
 	}
 });
 async function create_draft(query, uid) {
-	const slug = encodeURIComponent(
-		String(query.title).toLowerCase().replace(new RegExp(" ", "g"), "-")
-	);
+	const slug = String(query.title)
+		.toLowerCase()
+		.replace(/([^a-z| ])/g, "") // Remove everything but the 26 ascii leters and spaces
+		.replace(new RegExp(" ", "g"), "-");
 
 	console.log("Slug: ", slug);
 	let draft = await Draft.create({ ...query, drafter_id: uid, slug: slug });
