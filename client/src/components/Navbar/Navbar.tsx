@@ -24,7 +24,7 @@ function Navbar() {
 		<div className="App">
 			<nav>
 				{validauthtoken ? isapproved ?
-					(<Link to="/drafts">Drafts</Link>) : false
+					(<Link to="/drafts">Drafts</Link>) : <></>
 					: (
 					<Link to="/login">Login</Link>
 				)}
