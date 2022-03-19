@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import store from "../../store";
 import Draft from "../../types/Draft";
 import deleteDraft from "../../helpers/delete_draft";
+import handle_error from "../../helpers/handle_error";
 
 interface DraftsResponse {
 	drafts: Draft[];
@@ -22,6 +23,7 @@ function Drafts() {
 				"auth-token": store.getState().validauthtoken.value,
 			},
 		});
+		if (!r.ok) throw new Error(`${r.status}`);
 		const rjson = (await r.json()) as DraftsResponse;
 
 		setDrafts(rjson.drafts);
@@ -29,12 +31,13 @@ function Drafts() {
 
 	useEffect(() => {
 		(async () => {
+			console.log(store.getState().validauthtoken.value);
 			if (store.getState().validauthtoken.value && drafts == null) {
-				await fetchDrafts();
+				await fetchDrafts().catch(handle_error);
 			} else {
 				store.subscribe(async () => {
 					if (store.getState().validauthtoken.value) {
-						await fetchDrafts();
+						await fetchDrafts().catch(handle_error);
 					}
 				});
 			}

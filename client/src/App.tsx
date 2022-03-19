@@ -7,6 +7,7 @@ import Register from "./routes/register/register";
 import Drafts from "./routes/drafts/drafts";
 import Draft_id from "./routes/draft_id/draft_id";
 import Create_draft from "./routes/create_draft/create_draft";
+import Access_Denied from "./routes/403/403";
 import Not_Found from "./routes/404/404";
 import { Routes, Route, Link } from "react-router-dom";
 import { useEffect } from "react";
@@ -78,6 +79,7 @@ function App() {
 					<Route path="drafts" element={<Drafts />} />
 					<Route path="draft/:slug" element={<Draft_id />} />
 					<Route path="create_draft" element={<Create_draft />} />
+					<Route path="403" element={<Access_Denied />} />
 					<Route path="*" element={<Not_Found />} />
 				</Routes>
 			</main>
@@ -147,7 +149,7 @@ function Home() {
 						<></>
 					)}
 
-					<Link to="/create_draft">Create a Draft</Link>
+					{(isApproved) ? <Link to="/create_draft">Create a Draft</Link> : <></>}
 				</div>
 			) : (
 				<div>
