@@ -8,6 +8,7 @@ import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
+import {useAppSelector} from "../../hooks";
 
 interface CreateDraftResponse {
 	draft: Draft;
@@ -85,6 +86,11 @@ function Create_Draft() {
 			setCoverImageURL(public_url);
 		}
 	};
+	const isapproved = useAppSelector(
+		(state) => state.isApproved.value
+	);
+
+	if (!isapproved) window.location.href = '/403';  // inefficient, loads page *then* redirects, may need more R&D
 
 	return (
 		<div>

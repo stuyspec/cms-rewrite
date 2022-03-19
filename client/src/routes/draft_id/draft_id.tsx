@@ -6,6 +6,7 @@ import Draft from "../../types/Draft";
 import upload_image_helper from "../../helpers/upload_image";
 import { useParams } from "react-router-dom";
 import deleteDraft from "../../helpers/delete_draft";
+import handle_error from "../../helpers/handle_error";
 
 interface DraftsResponse {
 	drafts: Draft[];
@@ -39,6 +40,7 @@ function Drafts() {
 			},
 			body: JSON.stringify({ _id: draft_id }),
 		});
+		if (!r.ok) throw new Error(`${r.status}`);
 		const rjson = (await r.json()) as DraftsResponse;
 
 		setDraft(rjson.drafts[0]);
@@ -100,11 +102,11 @@ function Drafts() {
 	useEffect(() => {
 		(async () => {
 			if (store.getState().validauthtoken.value && draft == null) {
-				await fetchDraft();
+				await fetchDraft().catch(handle_error);
 			} else {
 				store.subscribe(async () => {
 					if (store.getState().validauthtoken.value) {
-						await fetchDraft();
+						await fetchDraft().catch(handle_error);
 					}
 				});
 			}

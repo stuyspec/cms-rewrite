@@ -16,12 +16,16 @@ function Navbar() {
 	const validauthtoken = useAppSelector(
 		(state) => state.validauthtoken.value
 	);
+	const isapproved = useAppSelector(
+		(state) => state.isApproved.value
+	);
+
 	return (
 		<div className="App">
 			<nav>
-				{validauthtoken ? (
-					<Link to="/drafts">Drafts</Link>
-				) : (
+				{validauthtoken ? isapproved ?
+					(<Link to="/drafts">Drafts</Link>) : <></>
+					: (
 					<Link to="/login">Login</Link>
 				)}
 
