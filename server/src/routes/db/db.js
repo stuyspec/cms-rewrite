@@ -155,6 +155,7 @@ router.delete("/delete_draft", editMiddleware, async (req, res, next) => {
 async function create_draft(query, uid) {
 	const slug = String(query.title)
 		.toLowerCase()
+		.trim()
 		.replace(/([^a-z| ])/g, "") // Remove everything but the 26 ascii leters and spaces
 		.replace(new RegExp(" ", "g"), "-");
 
