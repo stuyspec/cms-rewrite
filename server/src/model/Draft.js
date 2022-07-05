@@ -34,11 +34,9 @@ const draftSchema = new mongoose.Schema({
 		type: String,
 	},
 	cover_image: {
-		required: true,
 		type: String,
 	},
 	cover_image_contributor: {
-		required: true,
 		type: String,
 	},
 	drafter_id: {

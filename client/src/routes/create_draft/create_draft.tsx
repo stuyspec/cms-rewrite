@@ -8,7 +8,7 @@ import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
-import {useAppSelector} from "../../hooks";
+import { useAppSelector } from "../../hooks";
 
 interface CreateDraftResponse {
 	draft: Draft;
@@ -45,7 +45,7 @@ function Create_Draft() {
 			document.getElementById("new_section") as any
 		).value;
 
-		const body = {
+		const body: any = {
 			title: title,
 			contributors: contributors,
 			text: text,
@@ -53,24 +53,25 @@ function Create_Draft() {
 			issue: issue,
 			section_id: section_id,
 			summary: summary,
-			cover_image: coverImageURL,
-			cover_image_contributor: cover_image_contributor,
 		};
-		if (coverImageURL) {
-			console.log({ body });
-			const r = await fetch(window.BASE_URL + "/api/db/create_draft", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"auth-token": store.getState().validauthtoken.value,
-				},
-				body: JSON.stringify(body),
-			});
-
-			const rjson = (await r.json()) as CreateDraftResponse;
-			console.log(rjson);
-			window.location.replace("/draft/" + rjson.draft._id);
+		if (coverImageURL && cover_image_contributor) {
+			body.cover_image = coverImageURL;
+			body.cover_image_contributor = cover_image_contributor;
 		}
+
+		console.log({ body });
+		const r = await fetch(window.BASE_URL + "/api/db/create_draft", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"auth-token": store.getState().validauthtoken.value,
+			},
+			body: JSON.stringify(body),
+		});
+
+		const rjson = (await r.json()) as CreateDraftResponse;
+		console.log(rjson);
+		window.location.replace("/draft/" + rjson.draft._id);
 	};
 
 	const upload_cover_image = async () => {
@@ -86,11 +87,9 @@ function Create_Draft() {
 			setCoverImageURL(public_url);
 		}
 	};
-	const isapproved = useAppSelector(
-		(state) => state.isApproved.value
-	);
+	const isapproved = useAppSelector((state) => state.isApproved.value);
 
-	if (!isapproved) window.location.href = '/403';  // inefficient, loads page *then* redirects, may need more R&D
+	if (!isapproved) window.location.href = "/403"; // inefficient, loads page *then* redirects, may need more R&D
 
 	return (
 		<div>
