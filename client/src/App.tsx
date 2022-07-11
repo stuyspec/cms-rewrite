@@ -16,7 +16,10 @@ import { setToken } from "./reducers/validAuthToken";
 import { setIsAdmin } from "./reducers/isAdmin";
 import { setIsApproved } from "./reducers/isApproved";
 import { setuid } from "./reducers/uid";
-import { useAppSelector, useAppDispatch } from "./hooks";
+import { useAppSelector } from "./hooks";
+import ErrorModal from "./components/ErrorModal/ErrorModal";
+import {setError} from "./reducers/error";
+import safe_fetch from "./helpers/safe_fetch";
 
 interface ValidatorResponse {
 	valid: boolean;
@@ -40,14 +43,13 @@ function App() {
 
 			if (saved_auth_token) {
 				console.log("Saved auth token: ", saved_auth_token);
-				const r = await fetch(
+				const rjson = (await safe_fetch(
 					window.BASE_URL + "/api/auth/verify/" + saved_auth_token,
 					{
 						method: "GET",
 						headers: {},
 					}
-				);
-				const rjson = (await r.json()) as ValidatorResponse;
+				)) as ValidatorResponse;
 
 				if (rjson.valid) {
 					console.log(rjson);
@@ -83,6 +85,7 @@ function App() {
 					<Route path="*" element={<Not_Found />} />
 				</Routes>
 			</main>
+			<ErrorModal />
 		</div>
 	);
 }
@@ -99,21 +102,19 @@ function Home() {
 		e.preventDefault();
 		if (isAdmin) {
 			const uid_submission = e.target.elements["uid"].value;
-			const r = await fetch(window.BASE_URL + "/api/auth/approve_user", {
+			const rjson = (await safe_fetch(window.BASE_URL + "/api/auth/approve_user", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 					"auth-token": store.getState().validauthtoken.value,
 				},
 				body: JSON.stringify({ uid: uid_submission }),
-			});
-
-			const rjson = (await r.json()) as { success: boolean };
+			})) as { success: boolean };
 			if (rjson.success) {
 				e.target.reset();
 			}
 		} else {
-			console.log("Non admins cannot approve users");
+			store.dispatch(setError("Non-admins cannot approve users!"));
 		}
 	};
 	return (

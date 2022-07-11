@@ -1,5 +1,6 @@
 import React from "react";
 import "./login.css";
+import safe_fetch from "../../helpers/safe_fetch";
 interface LoginResponse {
 	token: string;
 	logged_in: boolean;
@@ -15,15 +16,13 @@ function Login() {
 		const password = e.target.elements["password"].value;
 		console.log("Logging in", email, password);
 
-		const r = await fetch(window.BASE_URL + "/api/auth/login", {
+		const rjson = await safe_fetch(window.BASE_URL + "/api/auth/login", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({ email, password }),
-		});
-
-		const rjson = (await r.json()) as LoginResponse;
+		}) as LoginResponse;
 
 		if (rjson.logged_in) {
 			localStorage.setItem("auth_token", rjson.token);

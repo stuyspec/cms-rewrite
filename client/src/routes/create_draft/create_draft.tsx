@@ -1,6 +1,6 @@
 import React from "react";
 import "./create_draft.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Draft from "../../types/Draft";
 import store from "../../store";
 import upload_image_helper from "../../helpers/upload_image";
@@ -9,6 +9,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import { useAppSelector } from "../../hooks";
+import safe_fetch from "../../helpers/safe_fetch";
 
 interface CreateDraftResponse {
 	draft: Draft;
@@ -60,16 +61,14 @@ function Create_Draft() {
 		}
 
 		console.log({ body });
-		const r = await fetch(window.BASE_URL + "/api/db/create_draft", {
+		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/create_draft", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 				"auth-token": store.getState().validauthtoken.value,
 			},
 			body: JSON.stringify(body),
-		});
-
-		const rjson = (await r.json()) as CreateDraftResponse;
+		})) as CreateDraftResponse;
 		console.log(rjson);
 		window.location.replace("/draft/" + rjson.draft._id);
 	};

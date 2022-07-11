@@ -6,6 +6,7 @@ import store from "../../store";
 import Draft from "../../types/Draft";
 import deleteDraft from "../../helpers/delete_draft";
 import handle_error from "../../helpers/handle_error";
+import safe_fetch from "../../helpers/safe_fetch";
 
 interface DraftsResponse {
 	drafts: Draft[];
@@ -16,15 +17,13 @@ function Drafts() {
 	const [drafts, setDrafts] = useState<Draft[] | null>(null);
 
 	const fetchDrafts = async () => {
-		const r = await fetch(window.BASE_URL + "/api/db/get_drafts", {
+		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/get_drafts", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 				"auth-token": store.getState().validauthtoken.value,
 			},
-		});
-		if (!r.ok) throw new Error(`${r.status}`);
-		const rjson = (await r.json()) as DraftsResponse;
+		})) as DraftsResponse;
 
 		setDrafts(rjson.drafts);
 	};
@@ -36,6 +35,12 @@ function Drafts() {
 				await fetchDrafts().catch(handle_error);
 			} else {
 				store.subscribe(async () => {
+					// TODO: optimize this subscription to reduce redundant requests (which happens a lot with the error state being in the store)
+					// how 2 ddos server 101: access this page with an unauthorized account
+					// which proceeds to get Forbiddens
+					// and due to the error state changes, it proceeds to do that on loop
+					// idea: set client-side cooldown, where cached draft is not invalidated for (at least a second?)
+					// ideally a server-side ratelimit is added too to avoid pain and suffering
 					if (store.getState().validauthtoken.value) {
 						await fetchDrafts().catch(handle_error);
 					}

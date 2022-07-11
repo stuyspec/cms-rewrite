@@ -7,6 +7,7 @@ import upload_image_helper from "../../helpers/upload_image";
 import { useParams } from "react-router-dom";
 import deleteDraft from "../../helpers/delete_draft";
 import handle_error from "../../helpers/handle_error";
+import safe_fetch from "../../helpers/safe_fetch";
 
 interface DraftsResponse {
 	drafts: Draft[];
@@ -32,16 +33,14 @@ function Drafts() {
 	const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
 
 	const fetchDraft = async () => {
-		const r = await fetch(window.BASE_URL + "/api/db/get_drafts", {
+		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/get_drafts", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 				"auth-token": store.getState().validauthtoken.value,
 			},
 			body: JSON.stringify({ _id: draft_id }),
-		});
-		if (!r.ok) throw new Error(`${r.status}`);
-		const rjson = (await r.json()) as DraftsResponse;
+		})) as DraftsResponse;
 
 		setDraft(rjson.drafts[0]);
 	};
@@ -83,16 +82,14 @@ function Drafts() {
 			cover_image: cover_image_to_use,
 		};
 
-		const r = await fetch(window.BASE_URL + "/api/db/update_draft", {
+		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/update_draft", {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
 				"auth-token": store.getState().validauthtoken.value,
 			},
 			body: JSON.stringify({ draft_id: draft?._id, update: send }),
-		});
-
-		const rjson = (await r.json()) as { success: boolean };
+		})) as { success: boolean };
 
 		if (rjson.success) {
 			location.reload();
@@ -129,7 +126,7 @@ function Drafts() {
 
 	const publishDraft = async () => {
 		console.log("Publish Draft");
-		const r = await fetch(window.BASE_URL + "/api/db/publish_article", {
+		const rjson = await safe_fetch(window.BASE_URL + "/api/db/publish_article", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -138,7 +135,6 @@ function Drafts() {
 			body: JSON.stringify({ draft_id: draft?._id }),
 		});
 
-		const rjson = await r.json();
 		if (rjson.article) {
 			window.open(
 				"https://stuyspecrewrite.vercel.app/article/" +

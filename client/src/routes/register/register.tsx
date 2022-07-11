@@ -1,9 +1,10 @@
 import React from "react";
 import "./register.css";
 
-import { useAppSelector, useAppDispatch } from "../../hooks";
+import { useAppDispatch } from "../../hooks";
 
 import { setToken } from "../../reducers/validAuthToken";
+import safe_fetch from "../../helpers/safe_fetch";
 
 interface RegisterResponse {
 	token: string;
@@ -21,15 +22,13 @@ function Register() {
 		const password = e.target.elements["password"].value;
 		const name = e.target.elements["name"].value;
 
-		const r = await fetch(window.BASE_URL + "/api/auth/register", {
+		const rjson = (await safe_fetch(window.BASE_URL + "/api/auth/register", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({ email, password, name }),
-		});
-
-		const rjson = (await r.json()) as RegisterResponse;
+		})) as RegisterResponse;
 
 		if (rjson.logged_in) {
 			dispatch(setToken(rjson.token));
