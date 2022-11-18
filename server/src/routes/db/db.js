@@ -3,6 +3,7 @@ const isAdminMiddleware = require("../auth/isAdminMiddleware");
 const router = require("express").Router();
 const Article = require("../../model/Article");
 const Draft = require("../../model/Draft");
+const Staff = require("../../model/Staff");
 const { draftValidation } = require("../../validation");
 const sharp = require("sharp");
 const s3 = require("../../aws");
@@ -180,6 +181,28 @@ async function get_drafts_handler(req, res, next) {
 		next(error);
 	}
 }
+
+// Staff
+async function get_staff(query) {
+	let staff = await Staff.find(query);
+	return staff;
+}
+async function get_staff_handler(req, res, next) {
+	try {
+		const staff = await get_staff(req.body || {});
+		res.json({
+			staff: staff,
+			description: "Successfully retrieved staff.",
+		});
+	} catch (error) {
+		next(error);
+	}
+}
+
+// Get All Staff
+// Get all articles
+router.get("/get_staff", get_staff_handler);
+router.post("/get_staff", get_staff_handler);
 
 router.post("/upload_media", async (req, res, next) => {
 	try {
