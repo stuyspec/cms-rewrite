@@ -4,7 +4,7 @@ module.exports = async function (req, res, next) {
 	try {
 		const token = req.header("auth-token");
 		if (!token) {
-			res.sendStatus(400);
+			res.status(400);
 			throw new Error("Token not included");
 		}
 		// console.log("verify token middleware says token: ", token);
@@ -15,7 +15,7 @@ module.exports = async function (req, res, next) {
 		const fromDB = await User.findById(verified._id);
 
 		if (!fromDB.isApproved) {
-			res.sendStatus(403);
+			res.status(403);
 			throw new Error("The user has not been approved");
 		}
 		req.user = fromDB;

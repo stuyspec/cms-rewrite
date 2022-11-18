@@ -19,7 +19,6 @@ app.use(helmet());
 app.use(morgan("tiny"));
 
 const db_str = process.env.MONGODB_URI;
-console.log(db_str);
 mongoose.connect(
 	db_str,
 	{

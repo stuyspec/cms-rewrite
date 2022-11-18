@@ -24,14 +24,14 @@ router.post("/publish_article", isAdminMiddleware, async (req, res, next) => {
 	try {
 		const draft_id = req.body.draft_id;
 		if (!draft_id) {
-			res.sendStatus(400);
+			res.status(400);
 			throw new Error("An id of a draft to publish was not specified");
 		}
 
 		const draft_data = await Draft.findById(draft_id).lean();
 
 		if (!draft_data) {
-			res.sendStatus(404);
+			res.status(404);
 			throw new Error(
 				`A draft with an id of ${draft_id} does not exist.`
 			);
@@ -132,7 +132,7 @@ const editMiddleware = async function (req, res, next) {
 router.put("/update_draft", editMiddleware, async (req, res, next) => {
 	try {
 		if (!req.body.update) {
-			res.sendStatus(400);
+			res.status(400);
 			throw new Error("update object not specified in request body");
 		}
 		await Draft.findByIdAndUpdate(req.body.draft_id, req.body.update, {
@@ -184,7 +184,7 @@ async function get_drafts_handler(req, res, next) {
 router.post("/upload_media", async (req, res, next) => {
 	try {
 		if (!req.files) {
-			res.sendStatus(400);
+			res.status(400);
 			throw new Error("No files included");
 		} else {
 			//Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
