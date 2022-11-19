@@ -187,6 +187,7 @@ async function get_staff(query) {
 	let staff = await Staff.find(query);
 	return staff;
 }
+
 async function get_staff_handler(req, res, next) {
 	try {
 		const staff = await get_staff(req.body || {});
@@ -199,8 +200,6 @@ async function get_staff_handler(req, res, next) {
 	}
 }
 
-// Get All Staff
-// Get all articles
 router.get("/get_staff", get_staff_handler);
 router.post("/get_staff", get_staff_handler);
 
