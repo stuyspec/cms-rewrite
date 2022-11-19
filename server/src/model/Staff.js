@@ -35,6 +35,7 @@ const staffSchema = new mongoose.Schema({
 		required: true,
 	},
 });
+staffSchema.index({ name: "text" });
 
 const staffModelfordb = mongoose.model("staff", staffSchema);
 

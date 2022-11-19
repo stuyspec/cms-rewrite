@@ -190,11 +190,23 @@ async function get_staff(query) {
 
 async function get_staff_handler(req, res, next) {
 	try {
-		const staff = await get_staff(req.body || {});
-		res.json({
-			staff: staff,
-			description: "Successfully retrieved staff.",
-		});
+		if (req.body.fuzzy_name) {
+			console.log("Search by fuzzy name: ", req.body.fuzzy_name);
+			const staff = await get_staff({
+				$text: { $search: req.body.fuzzy_name },
+			});
+			res.json({
+				staff: staff,
+				description:
+					"Successfully retrieved staff by doing a fuzzy search.",
+			});
+		} else {
+			const staff = await get_staff(req.body || {});
+			res.json({
+				staff: staff,
+				description: "Successfully retrieved staff.",
+			});
+		}
 	} catch (error) {
 		next(error);
 	}
