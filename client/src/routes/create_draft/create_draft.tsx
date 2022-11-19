@@ -10,6 +10,7 @@ import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import { useAppSelector } from "../../hooks";
 import safe_fetch from "../../helpers/safe_fetch";
+import ContributorPopUp from "../../components/ContributorPopUp/ContributorPopUp";
 
 interface CreateDraftResponse {
 	draft: Draft;
@@ -89,6 +90,7 @@ function Create_Draft() {
 			setCoverImageURL(public_url);
 		}
 	};
+
 	const isapproved = useAppSelector((state) => state.isApproved.value);
 
 	if (!isapproved) window.location.href = "/403"; // inefficient, loads page *then* redirects, may need more R&D
@@ -107,10 +109,7 @@ function Create_Draft() {
 					Draft title:&nbsp;
 					<input type="text" id="new_title" />
 				</h2>
-				<h3>
-					Draft authors:&nbsp;
-					<input type="text" id="new_contributors" />
-				</h3>
+				<ContributorPopUp />
 				<div>
 					<input
 						type="file"
