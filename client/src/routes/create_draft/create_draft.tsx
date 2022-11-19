@@ -30,7 +30,7 @@ function Create_Draft() {
 		const title: string = (document.getElementById("new_title") as any)
 			.value;
 		const contributors: string[] = (
-			(document.getElementById("new_title") as any).value as string
+			(document.getElementById("new_contributors") as any).value as string
 		).split(", ");
 		const cover_image_contributor: string = (
 			document.getElementById("new_cover_image_contributor") as any
@@ -61,14 +61,17 @@ function Create_Draft() {
 		}
 
 		console.log({ body });
-		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/create_draft", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"auth-token": store.getState().validauthtoken.value,
-			},
-			body: JSON.stringify(body),
-		})) as CreateDraftResponse;
+		const rjson = (await safe_fetch(
+			window.BASE_URL + "/api/db/create_draft",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"auth-token": store.getState().validauthtoken.value,
+				},
+				body: JSON.stringify(body),
+			}
+		)) as CreateDraftResponse;
 		console.log(rjson);
 		window.location.replace("/draft/" + rjson.draft._id);
 	};
