@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import deleteDraft from "../../helpers/delete_draft";
 import handle_error from "../../helpers/handle_error";
 import safe_fetch from "../../helpers/safe_fetch";
+import ContributorPopUp from "../../components/ContributorPopUp/ContributorPopUp";
 
 interface DraftsResponse {
 	drafts: Draft[];
@@ -31,18 +32,26 @@ function Drafts() {
 	const { slug: draft_id } = useParams();
 	const [draft, setDraft] = useState<Draft | null>(null);
 	const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
+	const [selectedContributors, setSelectedContributors] = useState<any>([]);
+	const [selectedImageContributors, setSelectedImageContributors] =
+		useState<any>([]);
 
 	const fetchDraft = async () => {
-		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/get_drafts", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"auth-token": store.getState().validauthtoken.value,
-			},
-			body: JSON.stringify({ _id: draft_id }),
-		})) as DraftsResponse;
+		const rjson = (await safe_fetch(
+			window.BASE_URL + "/api/db/get_drafts",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"auth-token": store.getState().validauthtoken.value,
+				},
+				body: JSON.stringify({ _id: draft_id }),
+			}
+		)) as DraftsResponse;
 
 		setDraft(rjson.drafts[0]);
+		setSelectedContributors(rjson.drafts[0].contributors);
+		setSelectedImageContributors([rjson.drafts[0].cover_image_contributor]);
 	};
 
 	const submitEdit = async () => {
@@ -50,18 +59,13 @@ function Drafts() {
 		const volume = (document.getElementById("edit_volume") as any)?.value;
 		const issue = (document.getElementById("edit_issue") as any)?.value;
 		const title = (document.getElementById("edit_title") as any)?.value;
-		const contributors_str = (
-			document.getElementById("edit_contributors") as any
-		)?.value;
-		const cover_image_contributor = (
-			document.getElementById("edit_cover_image_contributor") as any
-		)?.value;
+		const contributors: string[] = selectedContributors.map(
+			(c: any) => c._id
+		);
+		const cover_image_contributor: string = selectedImageContributors.map(
+			(c: any) => c._id
+		)[0];
 		const text = (document.getElementById("edit_text") as any)?.value;
-
-		let contributors: string[] = contributors_str
-			? contributors_str.split(",")
-			: [];
-		contributors = contributors.map((v) => v.trim());
 
 		const section_id = (document.getElementById("edit_section") as any)
 			?.value;
@@ -82,14 +86,17 @@ function Drafts() {
 			cover_image: cover_image_to_use,
 		};
 
-		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/update_draft", {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				"auth-token": store.getState().validauthtoken.value,
-			},
-			body: JSON.stringify({ draft_id: draft?._id, update: send }),
-		})) as { success: boolean };
+		const rjson = (await safe_fetch(
+			window.BASE_URL + "/api/db/update_draft",
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					"auth-token": store.getState().validauthtoken.value,
+				},
+				body: JSON.stringify({ draft_id: draft?._id, update: send }),
+			}
+		)) as { success: boolean };
 
 		if (rjson.success) {
 			location.reload();
@@ -126,14 +133,17 @@ function Drafts() {
 
 	const publishDraft = async () => {
 		console.log("Publish Draft");
-		const rjson = await safe_fetch(window.BASE_URL + "/api/db/publish_article", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"auth-token": store.getState().validauthtoken.value,
-			},
-			body: JSON.stringify({ draft_id: draft?._id }),
-		});
+		const rjson = await safe_fetch(
+			window.BASE_URL + "/api/db/publish_article",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"auth-token": store.getState().validauthtoken.value,
+				},
+				body: JSON.stringify({ draft_id: draft?._id }),
+			}
+		);
 
 		if (rjson.article) {
 			window.open(
@@ -172,15 +182,12 @@ function Drafts() {
 								defaultValue={draft.title}
 							/>
 						</h2>
-						<h3>
-							Draft authors:&nbsp;
-							<textarea
-								id="edit_contributors"
-								defaultValue={genFormattedContributors(
-									draft.contributors
-								)}
-							/>
-						</h3>
+
+						<ContributorPopUp
+							selectedContributors={selectedContributors}
+							setSelectedContributors={setSelectedContributors}
+							title="Article Contributors:"
+						></ContributorPopUp>
 						<img
 							id="cover_image"
 							src={
@@ -199,14 +206,14 @@ function Drafts() {
 								Edit Image
 							</button>
 						</div>
-						<h3>
-							Image by&nbsp;
-							<input
-								type="text"
-								id="edit_cover_image_contributor"
-								defaultValue={draft.cover_image_contributor}
-							/>
-						</h3>
+						<ContributorPopUp
+							selectedContributors={selectedImageContributors}
+							setSelectedContributors={
+								setSelectedImageContributors
+							}
+							title="Image Contributors:"
+							max_contributors={1}
+						></ContributorPopUp>
 						<textarea id="text" defaultValue={draft.text} />
 						<h3>
 							Section:&nbsp;
