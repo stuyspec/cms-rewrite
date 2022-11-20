@@ -1,3 +1,17 @@
 #contributor_popup_container {
 	border: 1px solid red;
 }
+
+.contributor_button {
+	border: 1px solid red;
+	background-color: beige;
+	width: 20px;
+	height: 20px;
+}
+
+#list_matched_contributors {
+	margin: auto;
+	width: 90%;
+	max-height: 300px;
+	overflow-y: scroll;
+}

@@ -20,6 +20,7 @@ interface CreateDraftResponse {
 function Create_Draft() {
 	const [editorState, setEditorState] = useState(EditorState.createEmpty());
 	const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
+	const [selectedContributors, setSelectedContributors] = useState<any>([]);
 
 	const new_draft_handler = async () => {
 		console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
@@ -30,9 +31,10 @@ function Create_Draft() {
 			.value;
 		const title: string = (document.getElementById("new_title") as any)
 			.value;
-		const contributors: string[] = (
-			(document.getElementById("new_contributors") as any).value as string
-		).split(", ");
+		const contributors: string[] = selectedContributors.map(
+			(c: any) => c.name
+		);
+		console.log("Contributors from child component!!", contributors);
 		const cover_image_contributor: string = (
 			document.getElementById("new_cover_image_contributor") as any
 		).value;
@@ -91,9 +93,10 @@ function Create_Draft() {
 		}
 	};
 
-	const isapproved = useAppSelector((state) => state.isApproved.value);
-
-	if (!isapproved) window.location.href = "/403"; // inefficient, loads page *then* redirects, may need more R&D
+	const isapproved = useAppSelector((state) => {
+		if (!state.isApproved.value) window.location.href = "/403"; // inefficient, loads page *then* redirects, may need more R&D
+		return state.isApproved.value;
+	});
 
 	return (
 		<div>
@@ -109,7 +112,10 @@ function Create_Draft() {
 					Draft title:&nbsp;
 					<input type="text" id="new_title" />
 				</h2>
-				<ContributorPopUp />
+				<ContributorPopUp
+					selectedContributors={selectedContributors}
+					setSelectedContributors={setSelectedContributors}
+				></ContributorPopUp>
 				<div>
 					<input
 						type="file"
