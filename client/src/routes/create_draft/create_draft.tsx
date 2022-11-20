@@ -136,6 +136,7 @@ function Create_Draft() {
 					selectedContributors={selectedImageContributors}
 					setSelectedContributors={setSelectedImageContributors}
 					title="Image Contributors:"
+					max_contributors={1}
 				></ContributorPopUp>
 				<h3>
 					Summary: &nbsp;

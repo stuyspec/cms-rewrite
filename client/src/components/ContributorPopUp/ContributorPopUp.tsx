@@ -2,11 +2,13 @@ import "./ContributorPopUp.css";
 import { useState } from "react";
 import safe_fetch from "../../helpers/safe_fetch";
 import store from "../../store";
+import { setError } from "../../reducers/error";
 
 function ContributorPopUp({
 	selectedContributors,
 	setSelectedContributors,
 	title,
+	max_contributors,
 }: any) {
 	const [matchedContributors, setMatchedContributors] = useState<any>([]);
 
@@ -41,7 +43,23 @@ function ContributorPopUp({
 			(v: any) => v._id == selected._id
 		);
 		if (!doesExist) {
-			setSelectedContributors([...selectedContributors, selected]);
+			// Short circuit if max contributors is a falsy value and set the contributor anyway
+			// or, check if adding contributors is under the max
+			if (
+				!max_contributors ||
+				selectedContributors.length < max_contributors
+			) {
+				setSelectedContributors([...selectedContributors, selected]);
+			} else {
+				// else, launch error pop up
+				store.dispatch(
+					setError(
+						"There can only be a maximum of " +
+							String(max_contributors) +
+							" contributors"
+					)
+				);
+			}
 		}
 	};
 
