@@ -2,8 +2,8 @@ const verifyTokenMiddlware = require("../auth/verifyTokenMiddleware");
 const isAdminMiddleware = require("../auth/isAdminMiddleware");
 const router = require("express").Router();
 const Article = require("../../model/Article");
-const Draft = require("../../model/Draft");
 const Staff = require("../../model/Staff");
+const Draft = require("../../model/Draft");
 const { draftValidation } = require("../../validation");
 const sharp = require("sharp");
 const s3 = require("../../aws");
@@ -59,7 +59,9 @@ router.post("/publish_article", isAdminMiddleware, async (req, res, next) => {
 });
 
 async function get_articles(query) {
-	let articles = await Article.find(query);
+	let articles = await Article.find(query)
+		.populate("cover_image_contributor")
+		.populate("contributors");
 	return articles;
 }
 async function get_articles_handler(req, res, next) {
@@ -105,6 +107,7 @@ const editMiddleware = async function (req, res, next) {
 		}
 
 		const draft = await Draft.findById(req.body.draft_id);
+
 		if (!draft) {
 			throw new Error("Draft with that id does not exist");
 		}
@@ -138,7 +141,9 @@ router.put("/update_draft", editMiddleware, async (req, res, next) => {
 		}
 		await Draft.findByIdAndUpdate(req.body.draft_id, req.body.update, {
 			upsert: false,
-		});
+		})
+			.populate("cover_image_contributor")
+			.populate("contributors");
 		res.json({ success: true });
 	} catch (error) {
 		next(error);
@@ -166,7 +171,9 @@ async function create_draft(query, uid) {
 	return saved_draft;
 }
 async function get_drafts(query) {
-	let drafts = await Draft.find(query);
+	let drafts = await Draft.find(query)
+		.populate("cover_image_contributor")
+		.populate("contributors");
 	return drafts;
 }
 

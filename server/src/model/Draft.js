@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+const StaffModel = require("./Staff");
+
 const draftSchema = new mongoose.Schema({
 	text: {
 		required: true,
@@ -15,7 +17,8 @@ const draftSchema = new mongoose.Schema({
 	},
 	contributors: {
 		required: true,
-		type: [String],
+		type: [mongoose.Schema.Types.ObjectId],
+		ref: StaffModel.modelName,
 	},
 	volume: {
 		required: true,
@@ -37,7 +40,8 @@ const draftSchema = new mongoose.Schema({
 		type: String,
 	},
 	cover_image_contributor: {
-		type: String,
+		type: mongoose.Schema.Types.ObjectId,
+		ref: StaffModel.modelName,
 	},
 	drafter_id: {
 		required: true,
