@@ -6,13 +6,11 @@ import store from "../../store";
 function ContributorPopUp({
 	selectedContributors,
 	setSelectedContributors,
+	title,
 }: any) {
 	const [matchedContributors, setMatchedContributors] = useState<any>([]);
 
-	const load_contributors = async () => {
-		const fuzzy_name = (document.getElementById("new_contributors") as any)
-			.value as string;
-
+	const load_contributors = async (fuzzy_name: string) => {
 		if (fuzzy_name != "") {
 			const rjson = await safe_fetch(
 				window.BASE_URL + "/api/db/get_staff",
@@ -33,7 +31,7 @@ function ContributorPopUp({
 	};
 
 	const on_type_contributor_handler = async (e: any) => {
-		await load_contributors();
+		await load_contributors(e.target.value);
 	};
 
 	const select_contributor = async (contributor_index: number) => {
@@ -60,12 +58,8 @@ function ContributorPopUp({
 	return (
 		<div id="contributor_popup_container">
 			<div>
-				Draft authors:&nbsp;
-				<input
-					type="text"
-					id="new_contributors"
-					onChange={on_type_contributor_handler}
-				/>
+				<h2>{title}</h2>
+				<input type="text" onChange={on_type_contributor_handler} />
 				<div>
 					<h3>Matched Contributors: </h3>
 					<div id="list_matched_contributors">

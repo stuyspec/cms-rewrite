@@ -21,6 +21,8 @@ function Create_Draft() {
 	const [editorState, setEditorState] = useState(EditorState.createEmpty());
 	const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
 	const [selectedContributors, setSelectedContributors] = useState<any>([]);
+	const [selectedImageContributors, setSelectedImageContributors] =
+		useState<any>([]);
 
 	const new_draft_handler = async () => {
 		console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
@@ -34,10 +36,10 @@ function Create_Draft() {
 		const contributors: string[] = selectedContributors.map(
 			(c: any) => c.name
 		);
-		console.log("Contributors from child component!!", contributors);
-		const cover_image_contributor: string = (
-			document.getElementById("new_cover_image_contributor") as any
-		).value;
+		const cover_image_contributor: string = selectedImageContributors.map(
+			(c: any) => c.name
+		)[0];
+
 		let text: string = draftToHtml(
 			convertToRaw(editorState.getCurrentContent())
 		);
@@ -115,6 +117,7 @@ function Create_Draft() {
 				<ContributorPopUp
 					selectedContributors={selectedContributors}
 					setSelectedContributors={setSelectedContributors}
+					title="Article Contributors:"
 				></ContributorPopUp>
 				<div>
 					<input
@@ -129,10 +132,11 @@ function Create_Draft() {
 				) : (
 					<></>
 				)}
-				<h3>
-					Image by&nbsp;
-					<input type="text" id="new_cover_image_contributor" />
-				</h3>
+				<ContributorPopUp
+					selectedContributors={selectedImageContributors}
+					setSelectedContributors={setSelectedImageContributors}
+					title="Image Contributors:"
+				></ContributorPopUp>
 				<h3>
 					Summary: &nbsp;
 					<textarea id="new_summary" />
