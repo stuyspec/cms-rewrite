@@ -34,10 +34,10 @@ function Create_Draft() {
 		const title: string = (document.getElementById("new_title") as any)
 			.value;
 		const contributors: string[] = selectedContributors.map(
-			(c: any) => c.name
+			(c: any) => c._id
 		);
 		const cover_image_contributor: string = selectedImageContributors.map(
-			(c: any) => c.name
+			(c: any) => c._id
 		)[0];
 
 		let text: string = draftToHtml(
