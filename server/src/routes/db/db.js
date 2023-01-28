@@ -60,8 +60,8 @@ router.post("/publish_article", isAdminMiddleware, async (req, res, next) => {
 
 async function get_articles(query) {
 	let articles = await Article.find(query)
-		.populate("cover_image_contributor")
-		.populate("contributors");
+		.populate({ path: "cover_image_contributor", select: "-password" })
+		.populate({ path: "contributors", select: "-password" });
 	return articles;
 }
 async function get_articles_handler(req, res, next) {
@@ -142,8 +142,8 @@ router.put("/update_draft", editMiddleware, async (req, res, next) => {
 		await Draft.findByIdAndUpdate(req.body.draft_id, req.body.update, {
 			upsert: false,
 		})
-			.populate("cover_image_contributor")
-			.populate("contributors");
+			.populate({ path: "cover_image_contributor", select: "-password" })
+			.populate({ path: "contributors", select: "-password" });
 		res.json({ success: true });
 	} catch (error) {
 		next(error);
@@ -172,8 +172,8 @@ async function create_draft(query, uid) {
 }
 async function get_drafts(query) {
 	let drafts = await Draft.find(query)
-		.populate("cover_image_contributor")
-		.populate("contributors");
+		.populate({ path: "cover_image_contributor", select: "-password" })
+		.populate({ path: "contributors", select: "-password" });
 	return drafts;
 }
 
@@ -191,7 +191,7 @@ async function get_drafts_handler(req, res, next) {
 
 // Staff
 async function get_staff(query) {
-	let staff = await Staff.find(query);
+	let staff = await Staff.find(query).select("-password");
 	return staff;
 }
 
