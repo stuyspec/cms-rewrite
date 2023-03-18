@@ -1,13 +1,14 @@
-import React from "react";
 import "./create_draft.css";
 import { useState } from "react";
 import Draft from "../../types/Draft";
 import store from "../../store";
 import upload_image_helper from "../../helpers/upload_image";
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { EditorState, convertToRaw } from "draft-js";
-import draftToHtml from "draftjs-to-html";
+// import { Editor } from "react-draft-wysiwyg";
+// import { Editor } from "../../components/Editor/Editor";
+import Editor from "../../components/RichTextEditor/Editor";
+// import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+// import { EditorState, convertToRaw } from "draft-js";
+// import draftToHtml from "draftjs-to-html";
 import { useAppSelector } from "../../hooks";
 import safe_fetch from "../../helpers/safe_fetch";
 import ContributorPopUp from "../../components/ContributorPopUp/ContributorPopUp";
@@ -18,14 +19,15 @@ interface CreateDraftResponse {
 }
 
 function Create_Draft() {
-	const [editorState, setEditorState] = useState(EditorState.createEmpty());
+	// const [editorState, setEditorState] = useState(EditorState.createEmpty());
 	const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
 	const [selectedContributors, setSelectedContributors] = useState<any>([]);
 	const [selectedImageContributors, setSelectedImageContributors] =
 		useState<any>([]);
+	const [html, setHTML] = useState("");
 
 	const new_draft_handler = async () => {
-		console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
+		// console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
 		console.log("Create new draft");
 		const volume: string = (document.getElementById("new_volume") as any)
 			.value;
@@ -40,9 +42,7 @@ function Create_Draft() {
 			(c: any) => c._id
 		)[0];
 
-		let text: string = draftToHtml(
-			convertToRaw(editorState.getCurrentContent())
-		);
+		let text: string = String(html);
 		text = text.replace(new RegExp("<p></p>", "g"), ""); // remove breaks between paragraphs
 		text = text.replace(new RegExp("\n", "g"), ""); // remove line breaks in the html
 		const summary: string = (document.getElementById("new_summary") as any)
@@ -156,13 +156,14 @@ function Create_Draft() {
 				</select>
 				<h3>The article text:</h3>
 				<div className="formattedEditor">
-					<Editor
+					{/* <Editor
 						editorState={editorState}
 						toolbarClassName="toolbarClassName"
 						wrapperClassName="wrapperClassName"
 						editorClassName="editorClassName"
 						onEditorStateChange={setEditorState}
-					/>
+					/> */}
+					<Editor setHTML={setHTML} />
 				</div>
 				<input onClick={new_draft_handler} type="submit"></input>
 			</div>

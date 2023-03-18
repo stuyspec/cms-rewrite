@@ -1,5 +1,4 @@
 // App.js
-import * as React from "react";
 import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
 import Login from "./routes/login/login";
@@ -18,7 +17,7 @@ import { setIsApproved } from "./reducers/isApproved";
 import { setuid } from "./reducers/uid";
 import { useAppSelector } from "./hooks";
 import ErrorModal from "./components/ErrorModal/ErrorModal";
-import {setError} from "./reducers/error";
+import { setError } from "./reducers/error";
 import safe_fetch from "./helpers/safe_fetch";
 
 interface ValidatorResponse {
@@ -102,14 +101,17 @@ function Home() {
 		e.preventDefault();
 		if (isAdmin) {
 			const uid_submission = e.target.elements["uid"].value;
-			const rjson = (await safe_fetch(window.BASE_URL + "/api/auth/approve_user", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"auth-token": store.getState().validauthtoken.value,
-				},
-				body: JSON.stringify({ uid: uid_submission }),
-			})) as { success: boolean };
+			const rjson = (await safe_fetch(
+				window.BASE_URL + "/api/auth/approve_user",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"auth-token": store.getState().validauthtoken.value,
+					},
+					body: JSON.stringify({ uid: uid_submission }),
+				}
+			)) as { success: boolean };
 			if (rjson.success) {
 				e.target.reset();
 			}
@@ -150,7 +152,11 @@ function Home() {
 						<></>
 					)}
 
-					{(isApproved) ? <Link to="/create_draft">Create a Draft</Link> : <></>}
+					{isApproved ? (
+						<Link to="/create_draft">Create a Draft</Link>
+					) : (
+						<></>
+					)}
 				</div>
 			) : (
 				<div>
