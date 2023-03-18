@@ -1,4 +1,3 @@
-import React from "react";
 import "./draft_id.css";
 import { useEffect, useState } from "react";
 import store from "../../store";
@@ -9,23 +8,11 @@ import deleteDraft from "../../helpers/delete_draft";
 import handle_error from "../../helpers/handle_error";
 import safe_fetch from "../../helpers/safe_fetch";
 import ContributorPopUp from "../../components/ContributorPopUp/ContributorPopUp";
+import Editor from "../../components/RichTextEditor/Editor";
 
 interface DraftsResponse {
 	drafts: Draft[];
 	description: string;
-}
-
-function genFormattedContributors(contributors: string[]) {
-	let formatted = "";
-	for (let i = 0; i < contributors.length; i++) {
-		let contributor = contributors[i];
-		formatted += contributor;
-
-		if (i < contributors.length - 1) {
-			formatted += ", ";
-		}
-	}
-	return formatted;
 }
 
 function Drafts() {
@@ -35,6 +22,7 @@ function Drafts() {
 	const [selectedContributors, setSelectedContributors] = useState<any>([]);
 	const [selectedImageContributors, setSelectedImageContributors] =
 		useState<any>([]);
+	const [html, setHTML] = useState("");
 
 	const fetchDraft = async () => {
 		const rjson = (await safe_fetch(
@@ -69,7 +57,6 @@ function Drafts() {
 		const cover_image_contributor: string = selectedImageContributors.map(
 			(c: any) => c._id
 		)[0];
-		const text = (document.getElementById("edit_text") as any)?.value;
 
 		const section_id = (document.getElementById("edit_section") as any)
 			?.value;
@@ -84,7 +71,7 @@ function Drafts() {
 			title,
 			contributors: contributors,
 			cover_image_contributor: cover_image_contributor,
-			text,
+			text: html,
 			section_id,
 			summary,
 			cover_image: cover_image_to_use,
@@ -223,7 +210,10 @@ function Drafts() {
 							title="Image Contributors:"
 							max_contributors={1}
 						></ContributorPopUp>
-						<textarea id="text" defaultValue={draft.text} />
+						{/* <textarea id="text" defaultValue={draft.text} /> */}
+						<div className="formattedEditor">
+							<Editor setHTML={setHTML} htmlString={draft.text} />
+						</div>
 						<h3>
 							Section:&nbsp;
 							<select

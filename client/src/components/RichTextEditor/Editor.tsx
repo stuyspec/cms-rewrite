@@ -79,21 +79,55 @@ import { LinkNode } from "@lexical/link";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+import { $generateNodesFromDOM } from "@lexical/html";
+import { $generateHtmlFromNodes } from "@lexical/html";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { useEffect } from "react";
+import { $getRoot, $insertNodes } from "lexical";
 
 type LexicalEditorProps = {
 	config: Parameters<typeof LexicalComposer>["0"]["initialConfig"];
 	setHTML: Function;
+	htmlString?: string;
 };
 
-import { $generateHtmlFromNodes } from "@lexical/html";
+function ImportHTML(props: { htmlString?: string }) {
+	const [editor] = useLexicalComposerContext();
+
+	useEffect(() => {
+		editor.update(() => {
+			if (props.htmlString) {
+				// In the browser you can use the native DOMParser API to parse the HTML string.
+				const parser = new DOMParser();
+				const dom = parser.parseFromString(
+					props.htmlString,
+					"text/html"
+				);
+
+				// Once you have the DOM instance it's easy to generate LexicalNodes.
+				const nodes = $generateNodesFromDOM(editor, dom);
+
+				// Select the root
+				$getRoot().select();
+
+				// Insert them at a selection.
+				$insertNodes(nodes);
+			}
+		});
+	}, [editor]);
+
+	return null;
+}
 
 export function LexicalEditor(props: LexicalEditorProps) {
 	const onChange = (editorState: any, editor: any) => {
 		editor.update(() => {
+			console.log("fired once!");
 			const rawHTML = $generateHtmlFromNodes(editor, null);
 			props.setHTML(rawHTML);
 		});
 	};
+
 	return (
 		<LexicalComposer initialConfig={props.config}>
 			<RichTextPlugin
@@ -103,6 +137,7 @@ export function LexicalEditor(props: LexicalEditorProps) {
 			/>
 			<LinkPlugin />
 			<OnChangePlugin onChange={onChange} />
+			<ImportHTML htmlString={props.htmlString} />
 		</LexicalComposer>
 	);
 }
@@ -115,7 +150,10 @@ const Placeholder = () => {
 	);
 };
 
-export default function Editor(props: { setHTML: Function }) {
+export default function Editor(props: {
+	setHTML: Function;
+	htmlString?: string;
+}) {
 	return (
 		<div
 			id="editor-wrapper"
@@ -143,6 +181,7 @@ export default function Editor(props: { setHTML: Function }) {
 					},
 					nodes: [LinkNode],
 				}}
+				htmlString={props.htmlString}
 			/>
 		</div>
 	);
