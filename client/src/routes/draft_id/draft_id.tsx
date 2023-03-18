@@ -51,7 +51,11 @@ function Drafts() {
 
 		setDraft(rjson.drafts[0]);
 		setSelectedContributors(rjson.drafts[0].contributors);
-		setSelectedImageContributors([rjson.drafts[0].cover_image_contributor]);
+		setSelectedImageContributors(
+			rjson.drafts[0].cover_image_contributor
+				? [rjson.drafts[0].cover_image_contributor]
+				: []
+		);
 	};
 
 	const submitEdit = async () => {
@@ -206,8 +210,13 @@ function Drafts() {
 								Edit Image
 							</button>
 						</div>
+
 						<ContributorPopUp
-							selectedContributors={selectedImageContributors}
+							selectedContributors={
+								selectedImageContributors.length > 0
+									? selectedImageContributors
+									: []
+							}
 							setSelectedContributors={
 								setSelectedImageContributors
 							}

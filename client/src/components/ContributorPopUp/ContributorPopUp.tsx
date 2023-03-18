@@ -40,7 +40,8 @@ function ContributorPopUp({
 		const selected: any = matchedContributors[contributor_index];
 
 		const doesExist = selectedContributors.find(
-			(v: any) => v._id == selected._id
+			(selectedContributor: any) =>
+				selectedContributor._id == selected._id
 		);
 		if (!doesExist) {
 			// Short circuit if max contributors is a falsy value and set the contributor anyway
@@ -67,7 +68,8 @@ function ContributorPopUp({
 		const selected: any = selectedContributors[contributor_index];
 
 		const newselectedcontributors = selectedContributors.filter(
-			(v: any) => v._id != selected._id
+			(selectedContributor: any) =>
+				selectedContributor._id != selected._id
 		);
 
 		setSelectedContributors(newselectedcontributors);
@@ -81,36 +83,40 @@ function ContributorPopUp({
 				<div>
 					<h3>Matched Contributors: </h3>
 					<div id="list_matched_contributors">
-						{matchedContributors.map((v: any, index: number) => (
-							<div key={v._id}>
-								<span>{v.name}</span>
-								<button
-									className="contributor_button"
-									onClick={async () => {
-										await select_contributor(index);
-									}}
-								>
-									+
-								</button>
-							</div>
-						))}
+						{matchedContributors.map(
+							(matchedContributor: any, index: number) => (
+								<div key={matchedContributor._id}>
+									<span>{matchedContributor.name}</span>
+									<button
+										className="contributor_button"
+										onClick={async () => {
+											await select_contributor(index);
+										}}
+									>
+										+
+									</button>
+								</div>
+							)
+						)}
 					</div>
 				</div>
 				<div>
 					<h3>Chosen Contributors:</h3>
-					{selectedContributors.map((v: any, index: number) => (
-						<div key={v._id}>
-							<span>{v.name}</span>
-							<button
-								className="contributor_button"
-								onClick={async () => {
-									await unselect_contributor(index);
-								}}
-							>
-								-
-							</button>
-						</div>
-					))}
+					{selectedContributors.map(
+						(selectedContributor: any, index: number) => (
+							<div key={selectedContributor._id}>
+								<span>{selectedContributor.name}</span>
+								<button
+									className="contributor_button"
+									onClick={async () => {
+										await unselect_contributor(index);
+									}}
+								>
+									-
+								</button>
+							</div>
+						)
+					)}
 				</div>
 			</div>
 		</div>
