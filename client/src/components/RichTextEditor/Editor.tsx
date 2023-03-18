@@ -51,7 +51,6 @@ function ImportHTML(props: { htmlString?: string }) {
 export function LexicalEditor(props: LexicalEditorProps) {
 	const onChange = (editorState: any, editor: any) => {
 		editor.update(() => {
-			console.log("fired once!");
 			const rawHTML = $generateHtmlFromNodes(editor, null);
 			props.setHTML(rawHTML);
 		});
