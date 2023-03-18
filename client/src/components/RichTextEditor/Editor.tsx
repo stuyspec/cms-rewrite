@@ -84,6 +84,8 @@ import { $generateHtmlFromNodes } from "@lexical/html";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useEffect } from "react";
 import { $getRoot, $insertNodes } from "lexical";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { ListItemNode, ListNode } from "@lexical/list";
 
 type LexicalEditorProps = {
 	config: Parameters<typeof LexicalComposer>["0"]["initialConfig"];
@@ -136,6 +138,7 @@ export function LexicalEditor(props: LexicalEditorProps) {
 				ErrorBoundary={LexicalErrorBoundary}
 			/>
 			<LinkPlugin />
+			<ListPlugin />
 			<OnChangePlugin onChange={onChange} />
 			<ImportHTML htmlString={props.htmlString} />
 		</LexicalComposer>
@@ -179,7 +182,7 @@ export default function Editor(props: {
 					onError: (error) => {
 						console.log(error);
 					},
-					nodes: [LinkNode],
+					nodes: [LinkNode, ListItemNode, ListNode],
 				}}
 				htmlString={props.htmlString}
 			/>
