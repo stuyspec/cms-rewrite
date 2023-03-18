@@ -1,4 +1,3 @@
-import React from "react";
 import "./register.css";
 
 import { useAppDispatch } from "../../hooks";
@@ -22,13 +21,16 @@ function Register() {
 		const password = e.target.elements["password"].value;
 		const name = e.target.elements["name"].value;
 
-		const rjson = (await safe_fetch(window.BASE_URL + "/api/auth/register", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ email, password, name }),
-		})) as RegisterResponse;
+		const rjson = (await safe_fetch(
+			window.BASE_URL + "/api/auth/register",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ email, password, name }),
+			}
+		)) as RegisterResponse;
 
 		if (rjson.logged_in) {
 			dispatch(setToken(rjson.token));

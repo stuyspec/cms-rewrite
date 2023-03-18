@@ -1,4 +1,3 @@
-import React from "react";
 import "./drafts.css";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -17,13 +16,16 @@ function Drafts() {
 	const [drafts, setDrafts] = useState<Draft[] | null>(null);
 
 	const fetchDrafts = async () => {
-		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/get_drafts", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"auth-token": store.getState().validauthtoken.value,
-			},
-		})) as DraftsResponse;
+		const rjson = (await safe_fetch(
+			window.BASE_URL + "/api/db/get_drafts",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"auth-token": store.getState().validauthtoken.value,
+				},
+			}
+		)) as DraftsResponse;
 
 		setDrafts(rjson.drafts);
 	};
