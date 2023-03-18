@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { $getRoot, $insertNodes } from "lexical";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { ListItemNode, ListNode } from "@lexical/list";
+import "./Editor.css";
 
 type LexicalEditorProps = {
 	config: Parameters<typeof LexicalComposer>["0"]["initialConfig"];
@@ -95,7 +96,7 @@ export default function Editor(props: {
 				config={{
 					namespace: "lexical-editor",
 					theme: {
-						root: "p-4 border-slate-500 border-2 rounded h-full min-h-[200px] focus:outline-none focus-visible:border-black",
+						root: "editor-root",
 						link: "cursor-pointer",
 						text: {
 							bold: "font-semibold",
@@ -104,6 +105,10 @@ export default function Editor(props: {
 							strikethrough: "line-through",
 							underlineStrikethrough: "underlined-line-through",
 						},
+						list: {
+							listitem: "editor-listItem",
+						},
+						paragraph: "editor-paragraph",
 					},
 					onError: (error) => {
 						console.log(error);
