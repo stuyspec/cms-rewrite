@@ -47,6 +47,9 @@ const draftSchema = new mongoose.Schema({
 		required: true,
 		type: String,
 	},
+	sub_section: {
+		type: String,
+	},
 });
 
 const draftModelfordb = mongoose.model("Draft", draftSchema);

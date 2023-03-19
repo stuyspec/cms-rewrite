@@ -23,6 +23,7 @@ function Drafts() {
 	const [selectedImageContributors, setSelectedImageContributors] =
 		useState<any>([]);
 	const [html, setHTML] = useState("");
+	const [subSection, setSubSection] = useState<string>("");
 
 	const fetchDraft = async () => {
 		const rjson = (await safe_fetch(
@@ -44,6 +45,7 @@ function Drafts() {
 				? [rjson.drafts[0].cover_image_contributor]
 				: []
 		);
+		setSubSection(rjson.drafts[0].sub_section || "");
 	};
 
 	const submitEdit = async () => {
@@ -232,6 +234,16 @@ function Drafts() {
 								<option value="7">Media</option>
 								<option value="8">Spec+</option>
 							</select>
+						</h3>
+						<h3>
+							sub_section: &nbsp;
+							<input
+								type="text"
+								onChange={(e) => {
+									setSubSection(e.target.value);
+								}}
+								value={subSection}
+							/>
 						</h3>
 						<h3>
 							Summary: &nbsp;

@@ -25,6 +25,7 @@ function Create_Draft() {
 	const [selectedImageContributors, setSelectedImageContributors] =
 		useState<any>([]);
 	const [html, setHTML] = useState("");
+	const [subSection, setSubSection] = useState<string>("");
 
 	const new_draft_handler = async () => {
 		// console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
@@ -63,6 +64,10 @@ function Create_Draft() {
 		if (coverImageURL && cover_image_contributor) {
 			body.cover_image = coverImageURL;
 			body.cover_image_contributor = cover_image_contributor;
+		}
+
+		if (subSection) {
+			body.sub_section = subSection;
 		}
 
 		console.log({ body });
@@ -154,15 +159,17 @@ function Create_Draft() {
 					<option value="7">Media</option>
 					<option value="8">Spec+</option>
 				</select>
+				<h3>
+					sub_section: &nbsp;
+					<input
+						type="text"
+						onChange={(e) => {
+							setSubSection(e.target.value);
+						}}
+					/>
+				</h3>
 				<h3>The article text:</h3>
 				<div className="formattedEditor">
-					{/* <Editor
-						editorState={editorState}
-						toolbarClassName="toolbarClassName"
-						wrapperClassName="wrapperClassName"
-						editorClassName="editorClassName"
-						onEditorStateChange={setEditorState}
-					/> */}
 					<Editor setHTML={setHTML} />
 				</div>
 				<input onClick={new_draft_handler} type="submit"></input>

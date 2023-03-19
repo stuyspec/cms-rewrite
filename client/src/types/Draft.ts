@@ -11,4 +11,5 @@ export default interface Draft {
 	cover_image: string;
 	cover_image_contributor: string;
 	drafter_id: string;
+	sub_section: string;
 }

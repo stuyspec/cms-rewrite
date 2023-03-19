@@ -47,6 +47,9 @@ const articleSchema = new mongoose.Schema({
 		required: true,
 		type: Boolean,
 	},
+	sub_section: {
+		type: String,
+	},
 });
 
 const articleModelfordb = mongoose.model("article", articleSchema);
