@@ -139,10 +139,7 @@ function Drafts() {
 		);
 
 		if (rjson.article) {
-			window.open(
-				"https://stuyspecrewrite.vercel.app/article/" +
-					rjson.article.slug
-			);
+			window.open("https://stuyspec.com/article/" + rjson.article.slug);
 			window.location.replace("/drafts");
 		}
 	};

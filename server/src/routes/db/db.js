@@ -232,7 +232,9 @@ router.post("/upload_media", async (req, res, next) => {
 			let file = req.files.file;
 			let s = sharp(file.data);
 			let { height: h, width: w } = await getHeightandWidth(s);
-			s.resize(500, Math.round(h * (500 / w)));
+			if (h > 1100) {
+				s.resize(1100, Math.round(h * (1100 / w)));
+			}
 
 			const sbuffer = await s.toBuffer();
 
