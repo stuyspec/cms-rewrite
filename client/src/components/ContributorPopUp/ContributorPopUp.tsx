@@ -87,6 +87,8 @@ function ContributorPopUp({
 							(matchedContributor: any, index: number) => (
 								<div key={matchedContributor._id}>
 									<span>{matchedContributor.name}</span>
+									&nbsp;&nbsp;|&nbsp;&nbsp;
+									<span>{matchedContributor.email}</span>
 									<button
 										className="contributor_button"
 										onClick={async () => {
@@ -106,6 +108,8 @@ function ContributorPopUp({
 						(selectedContributor: any, index: number) => (
 							<div key={selectedContributor._id}>
 								<span>{selectedContributor.name}</span>
+								&nbsp;&nbsp;|&nbsp;&nbsp;
+								<span>{selectedContributor.email}</span>
 								<button
 									className="contributor_button"
 									onClick={async () => {
