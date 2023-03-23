@@ -1,5 +1,5 @@
 const express = require("express");
-const cors = require("cors");
+// const cors = require("cors");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
@@ -8,7 +8,7 @@ const middlewares = require("./middlewares");
 const fileUpload = require("express-fileupload");
 const app = express();
 // Middleware
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 app.use(
 	fileUpload({
