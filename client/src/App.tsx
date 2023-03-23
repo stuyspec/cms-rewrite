@@ -66,7 +66,7 @@ function App() {
 		window.BASE_URL = "http://127.0.0.1:5678";
 	} else {
 		console.log("Production");
-		window.BASE_URL = "https://cms-alpha-backend.stuyspecba.com";
+		window.BASE_URL = "https://cms-alpha-backend.stuyspec.com";
 	}
 
 	return (
