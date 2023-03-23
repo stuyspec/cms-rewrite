@@ -8,6 +8,20 @@ The api runs off of express.
 
 The default port to run on is 5678, but this can be changed with the PORT environment variable in .env
 
+## Running this api with docker
+
+Build the app with docker.
+
+```bash
+docker build -t cmsrewritebackend .
+```
+
+Next, run the built container.
+
+```bash
+docker run -p 127.0.0.1:5678:5678 cmsrewritebackend
+```
+
 ## Security
 
 This app is protected with a firewall, helmet, and most importantly, the authentication layer.
