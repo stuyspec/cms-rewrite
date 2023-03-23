@@ -1,4 +1,20 @@
-# Client 
+# Client
+
+## Running this client with docker
+
+Build the app with docker.
+
+```bash
+docker build -t cmsrewritefrontend .
+```
+
+Next, run the built container.
+
+```bash
+docker run -p 127.0.0.1:3001:4173 cmsrewritefrontend
+```
+
+This will run on port **3001** and not _3000_ or _4173_
 
 ## Available Scripts
 
