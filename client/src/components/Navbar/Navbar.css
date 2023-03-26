@@ -22,12 +22,3 @@ nav * {
 a {
 	color: var(--text-primary);
 }
-@media only screen and (max-width: 600px) {
-	nav * {
-		display: none;
-	}
-
-	#title {
-		display: block;
-	}
-}
