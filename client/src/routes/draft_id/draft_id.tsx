@@ -140,7 +140,7 @@ function Drafts() {
 
 		if (rjson.article) {
 			window.open("https://stuyspec.com/article/" + rjson.article.slug);
-			window.location.replace("/drafts");
+			window.location.replace("/");
 		}
 	};
 

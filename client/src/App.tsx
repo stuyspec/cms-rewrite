@@ -152,13 +152,22 @@ function Home() {
 								<br />
 								<input type="submit" />
 							</form>
+							<h3 id="create_staff_link">
+								<Link to="/create_staff">
+									Create a contributor
+								</Link>
+							</h3>
 						</div>
 					) : (
 						<></>
 					)}
 
 					{isApproved ? (
-						<Link to="/create_draft">Create a Draft</Link>
+						<div id="create_draft_div">
+							<h1>
+								<Link to="/create_draft">Create a draft</Link>
+							</h1>
+						</div>
 					) : (
 						<></>
 					)}
