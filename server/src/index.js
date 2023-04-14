@@ -1,5 +1,5 @@
 const express = require("express");
-// const cors = require("cors");
+const cors = require("cors");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
@@ -8,7 +8,14 @@ const middlewares = require("./middlewares");
 const fileUpload = require("express-fileupload");
 const app = express();
 // Middleware
-// app.use(cors());
+
+let env = process.env.NODE_ENV || "development";
+if (env == "development") {
+	app.use(cors());
+}
+
+console.log(`App is in ${env}!`);
+
 app.use(express.json());
 app.use(
 	fileUpload({

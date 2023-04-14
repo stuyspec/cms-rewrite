@@ -4,7 +4,7 @@ const router = require("express").Router();
 const Article = require("../../model/Article");
 const Staff = require("../../model/Staff");
 const Draft = require("../../model/Draft");
-const { draftValidation } = require("../../validation");
+const { draftValidation, createStaffValidation } = require("../../validation");
 const sharp = require("sharp");
 const s3 = require("../../aws");
 
@@ -221,6 +221,49 @@ async function get_staff_handler(req, res, next) {
 
 router.get("/get_staff", get_staff_handler);
 router.post("/get_staff", get_staff_handler);
+
+// Create a staff member, aka a contributor
+router.post("/create_staff", isAdminMiddleware, async (req, res, next) => {
+	try {
+		const validation = createStaffValidation(req.body);
+		if ("error" in validation) {
+			throw new Error(validation.error.details[0].message);
+		}
+
+		const slug = String(req.body.name)
+			.toLowerCase()
+			.trim()
+			.replace(/([^a-z| ])/g, "") // Remove everything but the 26 ascii leters and spaces
+			.replace(new RegExp(" ", "g"), "-");
+
+		// Attempt to see if a staff member with that slug already exists
+		const attempt_to_find_staff = await Staff.find({ slug });
+		console.log({ attempt_to_find_staff });
+		if (attempt_to_find_staff.length > 0) {
+			throw new Error(`A staff member with slug ${slug} already exists!`);
+		}
+
+		const staff_body = {
+			name: req.body.name,
+			slug: slug,
+			email: req.body.email,
+			created_at: new Date(),
+		};
+		if (req.body.description && req.body.description.length > 1) {
+			staff_body.description = req.body.description;
+		}
+
+		let staff = await Staff.create(staff_body);
+		let saved_staff = await staff.save();
+
+		res.json({
+			message: "Created the staff member",
+			staff: saved_staff,
+		});
+	} catch (error) {
+		next(error);
+	}
+});
 
 router.post("/upload_media", async (req, res, next) => {
 	try {
