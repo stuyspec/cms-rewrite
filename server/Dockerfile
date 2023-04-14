@@ -18,4 +18,5 @@ RUN npm ci --only=production
 COPY . .
 
 EXPOSE 5678
+ARG NODE_ENV=production
 CMD [ "npm", "start" ]
