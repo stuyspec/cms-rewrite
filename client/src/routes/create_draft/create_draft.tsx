@@ -26,7 +26,34 @@ function Create_Draft() {
 		useState<any>([]);
 	const [html, setHTML] = useState("");
 	const [subSection, setSubSection] = useState<string>("");
-	const subSections = ['art', 'theater', 'stc', 'financial-literacy', 'comics', 'music', 'voices', 'sports-at-stuyvesant', 'campaign-coverage', 'professional-sports', 'film', 'literature', 'spooktator', 'disrespectator', 'staff-editorials', 'television', 'fashion', 'lifestuyle', 'culture', 'music', 'food', 'thinkpiece', '9-11', 'sing!'];  // todo: dynamic definition
+	const subSections = [
+		"art",
+		"theater",
+		"stc",
+		"financial-literacy",
+		"comics",
+		"music",
+		"voices",
+		"sports-at-stuyvesant",
+		"campaign-coverage",
+		"1031-terror-attack",
+		"black-lives-matter",
+		"professional-sports",
+		"film",
+		"literature",
+		"spooktator",
+		"disrespectator",
+		"staff-editorials",
+		"television",
+		"fashion",
+		"lifestuyle",
+		"culture",
+		"music",
+		"food",
+		"thinkpiece",
+		"9-11",
+		"sing!",
+	]; // todo: dynamic definition
 
 	const new_draft_handler = async () => {
 		// console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
@@ -168,9 +195,11 @@ function Create_Draft() {
 						}}
 						value={subSection}
 					>
-						<option value=""/>
+						<option value="" />
 						{subSections.map((subsection) => {
-							return (<option value={subSection}>{subsection}</option>)
+							return (
+								<option value={subSection}>{subsection}</option>
+							);
 						})}
 					</select>
 				</h3>
