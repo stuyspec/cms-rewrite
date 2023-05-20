@@ -290,7 +290,10 @@ function Drafts() {
 							/>
 						</h3>
 					</div>
-					<button onClick={submitEdit}>Submit the edit</button>
+					<button id="submit_edit_button" onClick={submitEdit}>
+						Submit the edit
+					</button>
+					<br />
 					<button
 						onClick={() => {
 							deleteDraft(draft._id);
@@ -299,7 +302,9 @@ function Drafts() {
 						Delete
 					</button>
 					<br />
-					<button onClick={publishDraft}>Publish</button>
+					<button id="publish_button" onClick={publishDraft}>
+						Publish
+					</button>
 				</div>
 			) : (
 				<div></div>

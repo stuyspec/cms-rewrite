@@ -27,3 +27,12 @@
 	border: 1px solid black;
 	text-align: left;
 }
+
+#publish_button {
+	margin-top: 20px;
+}
+
+#submit_edit_button {
+	margin-top: 5px;
+	padding: 10px;
+}
