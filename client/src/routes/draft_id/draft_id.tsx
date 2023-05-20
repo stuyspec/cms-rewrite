@@ -24,6 +24,34 @@ function Drafts() {
 		useState<any>([]);
 	const [html, setHTML] = useState("");
 	const [subSection, setSubSection] = useState<string>("");
+	const subSections = [
+		"art",
+		"theater",
+		"stc",
+		"financial-literacy",
+		"comics",
+		"music",
+		"voices",
+		"sports-at-stuyvesant",
+		"campaign-coverage",
+		"1031-terror-attack",
+		"black-lives-matter",
+		"professional-sports",
+		"film",
+		"literature",
+		"spooktator",
+		"disrespectator",
+		"staff-editorials",
+		"television",
+		"fashion",
+		"lifestuyle",
+		"culture",
+		"music",
+		"food",
+		"thinkpiece",
+		"9-11",
+		"sing!",
+	]; // todo: dynamic definition
 
 	const fetchDraft = async () => {
 		const rjson = (await safe_fetch(
@@ -234,13 +262,21 @@ function Drafts() {
 						</h3>
 						<h3>
 							sub_section: &nbsp;
-							<input
-								type="text"
+							<select
 								onChange={(e) => {
 									setSubSection(e.target.value);
 								}}
 								value={subSection}
-							/>
+							>
+								<option value="" />
+								{subSections.map((subsection) => {
+									return (
+										<option value={subSection}>
+											{subsection}
+										</option>
+									);
+								})}
+							</select>
 						</h3>
 						<h3>
 							Summary: &nbsp;
