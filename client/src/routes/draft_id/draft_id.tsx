@@ -46,7 +46,6 @@ function Drafts() {
 		"fashion",
 		"lifestuyle",
 		"culture",
-		"music",
 		"food",
 		"thinkpiece",
 		"9-11",
@@ -92,20 +91,25 @@ function Drafts() {
 			?.value;
 		const summary = (document.getElementById("edit_summary") as any)?.value;
 
-		const cover_image_to_use = coverImageURL
-			? coverImageURL
-			: draft?.cover_image;
-		const send = {
+		const send: any = {
 			volume,
 			issue,
 			title,
 			contributors: contributors,
-			cover_image_contributor: cover_image_contributor,
 			text: html,
 			section_id,
 			summary,
-			cover_image: cover_image_to_use,
 		};
+		if (subSection) {
+			send.sub_section = subSection;
+		}
+		const cover_image_to_use = coverImageURL
+			? coverImageURL
+			: draft?.cover_image;
+		if (cover_image_to_use && cover_image_contributor) {
+			send.cover_image = cover_image_to_use;
+			send.cover_image_contributor = cover_image_contributor;
+		}
 
 		const rjson = (await safe_fetch(
 			window.BASE_URL + "/api/db/update_draft",
@@ -269,10 +273,10 @@ function Drafts() {
 								value={subSection}
 							>
 								<option value="" />
-								{subSections.map((subsection) => {
+								{subSections.map((v_substr: string) => {
 									return (
-										<option value={subSection}>
-											{subsection}
+										<option key={v_substr} value={v_substr}>
+											{v_substr}
 										</option>
 									);
 								})}

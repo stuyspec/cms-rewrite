@@ -48,7 +48,6 @@ function Create_Draft() {
 		"fashion",
 		"lifestuyle",
 		"culture",
-		"music",
 		"food",
 		"thinkpiece",
 		"9-11",
@@ -196,9 +195,11 @@ function Create_Draft() {
 						value={subSection}
 					>
 						<option value="" />
-						{subSections.map((subsection) => {
+						{subSections.map((v_substr: string) => {
 							return (
-								<option value={subSection}>{subsection}</option>
+								<option key={v_substr} value={v_substr}>
+									{v_substr}
+								</option>
 							);
 						})}
 					</select>
