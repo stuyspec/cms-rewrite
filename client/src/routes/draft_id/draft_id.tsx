@@ -9,14 +9,17 @@ import handle_error from "../../helpers/handle_error";
 import safe_fetch from "../../helpers/safe_fetch";
 import ContributorPopUp from "../../components/ContributorPopUp/ContributorPopUp";
 import Editor from "../../components/RichTextEditor/Editor";
+import { useAppSelector } from "../../hooks";
 
 interface DraftsResponse {
 	drafts: Draft[];
 	description: string;
 }
 
-function Drafts() {
+function EditDraftPage() {
 	const { slug: draft_id } = useParams();
+	const isAdmin = useAppSelector((state) => state.isAdmin.value);
+
 	const [draft, setDraft] = useState<Draft | null>(null);
 	const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
 	const [selectedContributors, setSelectedContributors] = useState<any>([]);
@@ -302,9 +305,13 @@ function Drafts() {
 						Delete
 					</button>
 					<br />
-					<button id="publish_button" onClick={publishDraft}>
-						Publish
-					</button>
+					{isAdmin ? (
+						<button id="publish_button" onClick={publishDraft}>
+							Publish
+						</button>
+					) : (
+						<></>
+					)}
 				</div>
 			) : (
 				<div></div>
@@ -313,4 +320,4 @@ function Drafts() {
 	);
 }
 
-export default Drafts;
+export default EditDraftPage;
