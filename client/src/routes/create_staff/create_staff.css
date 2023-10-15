@@ -1,3 +1,11 @@
 #create_staff_main h1 {
 	color: black;
 }
+
+#cover_image {
+	width: 500px;
+}
+
+#upload_cover_image {
+	padding : 30px;
+}

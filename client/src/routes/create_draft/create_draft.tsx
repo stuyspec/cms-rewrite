@@ -156,8 +156,9 @@ function Create_Draft() {
 						type="file"
 						accept="image/png, image/jpg, image/jpeg"
 						id="upload_cover_image"
+						name="cover_image"
+						onChange={upload_cover_image}
 					/>
-					<button onClick={upload_cover_image}>Upload Image</button>
 				</div>
 				{coverImageURL ? (
 					<img id="cover_image" src={coverImageURL} />

@@ -226,10 +226,8 @@ function EditDraftPage() {
 								type="file"
 								accept="image/png, image/jpg, image/jpeg"
 								id="upload_cover_image"
+								onChange={upload_cover_image}
 							/>
-							<button onClick={upload_cover_image}>
-								Edit Image
-							</button>
 						</div>
 
 						<ContributorPopUp
