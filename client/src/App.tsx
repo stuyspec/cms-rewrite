@@ -6,6 +6,7 @@ import Register from "./routes/register/register";
 import Drafts from "./routes/drafts/drafts";
 import Draft_id from "./routes/draft_id/draft_id";
 import Create_draft from "./routes/create_draft/create_draft";
+import Parse_draft from "./routes/parse_draft/parse_draft";
 import Create_Staff_Route from "./routes/create_staff/create_staff";
 import Access_Denied from "./routes/403/403";
 import Not_Found from "./routes/404/404";
@@ -81,6 +82,7 @@ function App() {
 					<Route path="drafts" element={<Drafts />} />
 					<Route path="draft/:slug" element={<Draft_id />} />
 					<Route path="create_draft" element={<Create_draft />} />
+					<Route path="parse_draft" element={<Parse_draft />} />
 					<Route
 						path="create_staff"
 						element={<Create_Staff_Route />}
@@ -166,6 +168,9 @@ function Home() {
 						<div id="create_draft_div">
 							<h1>
 								<Link to="/create_draft">Create a draft</Link>
+							</h1>
+							<h1>
+								<Link to="/parse_draft">Parse a draft</Link>
 							</h1>
 						</div>
 					) : (
