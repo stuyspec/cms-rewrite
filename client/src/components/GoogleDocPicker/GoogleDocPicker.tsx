@@ -13,22 +13,65 @@ const API_KEY = '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';  // "CLIENT_SECRET" is no
 const APP_ID = 'file-picker-test-406301';
 
 function parseHtml(html: string) {
-    const load = cheerio.load(html);
-
-    const title = load('p:contains("Title: ")').text().replace('Title: ', '');
-    const categoryandissue = load('p:contains("The Spectator / ")').text().split('The Spectator / ')[1].split(" / Issue ");
-    const [category, issue] = categoryandissue;
-    const author = load('p:contains("By: ")').text().replace('By: ', '');
-    const focusSentence = load('p:contains("Focus Sentence: ")').text().replace('Focus Sentence: ', '');
-    const content = load('p:contains("Focus Sentence: ")').nextUntil('body').toString();
-    return {
-        title,
-        category,
-        issue,
-        author,
-        focusSentence,
-        content
-    };
+    try {
+        const load = cheerio.load(html);
+        let lines = 0;
+    
+        const titleMatch = html.match(/Title: (.+)/);
+        let title = titleMatch ? titleMatch[1] : load('body p').first().text().trim();
+    
+        if (!title.trim()) {
+          title = load('body p').eq(1).text().trim();
+          lines = 1;
+        }
+    
+        let authorLine = load('body p').eq(2 + lines).text().trim();
+        let authors = [];
+        
+        if (authorLine.trim().toLowerCase().startsWith("by") || authorLine.trim().toLowerCase().startsWith("by:")) {
+          const authorMatch = authorLine.match(/By:?\s*([^<]+)/i);
+          if (authorMatch) {
+            authors = authorMatch[1].split(/\s*(?:,\s*| and )\s*/i).map(author => author.trim());;
+          } else {
+            authors.push('Author not found');
+          }
+        } else {
+          authors.push(authorLine);
+        }
+    
+        let categoryIssueLine = load('body p').eq(1 + lines).text().trim();
+        let category = 'Category not found';
+        let issue = 'Issue not found';
+    
+        const categoryIssueParts = categoryIssueLine.split('/');
+        for (const part of categoryIssueParts) {
+          if (part.trim().toLowerCase().includes('issue')) {
+            issue = part.replace(/\D/g, "");
+          } else if (!part.trim().toLowerCase().includes('the spectator')){
+            category = part.trim();
+          } 
+        }
+    
+        const focusSentenceRegex = /Focus Sentence:\s*(.*)/i;
+        const focusSentenceElement = load('body p').filter(function() { return focusSentenceRegex.test(load(this).text()); }).first();
+        const focusSentence = focusSentenceElement.text().replace(/Focus Sentence:/gi, '').trim()
+    
+        const head = load('head').html();
+        const content = `<head>${head}</head><body>${load('body p').eq(focusSentenceElement.index()).nextUntil('body').toString()}</body>`;
+    
+        return {
+            title,
+            category,
+            issue,
+            authors,
+            focusSentence,
+            content
+        };
+    
+      }catch (error) {
+        console.error('Error reading the file:', error);
+        throw error;
+      }
 }
 
 export default function GoogleDocPicker(props: PickerProps) {
