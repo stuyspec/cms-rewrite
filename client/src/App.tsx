@@ -7,6 +7,7 @@ import Drafts from "./routes/drafts/drafts";
 import Draft_id from "./routes/draft_id/draft_id";
 import Create_draft from "./routes/create_draft/create_draft";
 import Create_Staff_Route from "./routes/create_staff/create_staff";
+import EditProductionArticle from "./routes/edit_prod/edit_prod";
 import Access_Denied from "./routes/403/403";
 import Not_Found from "./routes/404/404";
 import { Routes, Route, Link } from "react-router-dom";
@@ -80,6 +81,7 @@ function App() {
 					<Route path="register" element={<Register />} />
 					<Route path="drafts" element={<Drafts />} />
 					<Route path="draft/:slug" element={<Draft_id />} />
+					<Route path="article/:slug" element={<EditProductionArticle />} />
 					<Route path="create_draft" element={<Create_draft />} />
 					<Route
 						path="create_staff"

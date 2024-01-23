@@ -2,8 +2,8 @@ import store from "../store";
 import { setError } from "../reducers/error";
 
 export default async function safe_fetch(
-	input: string,
-	init: Object,
+	input: RequestInfo,
+	init: RequestInit,
 	popup: boolean = true
 ) {
 	/*
