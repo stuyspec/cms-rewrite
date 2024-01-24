@@ -10,24 +10,15 @@ import Create_Staff_Route from "./routes/create_staff/create_staff";
 import EditProductionArticle from "./routes/edit_prod/edit_prod";
 import Access_Denied from "./routes/403/403";
 import Not_Found from "./routes/404/404";
-import { Routes, Route, Link } from "react-router-dom";
-import { useEffect } from "react";
+import { Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
+import { ReactElement, ReactNode, useEffect } from "react";
 import store from "./store";
-import { setToken } from "./reducers/validAuthToken";
-import { setIsAdmin } from "./reducers/isAdmin";
-import { setIsApproved } from "./reducers/isApproved";
-import { setuid } from "./reducers/uid";
 import { useAppSelector } from "./hooks";
 import ErrorModal from "./components/ErrorModal/ErrorModal";
 import { setError } from "./reducers/error";
 import safe_fetch from "./helpers/safe_fetch";
-
-interface ValidatorResponse {
-	valid: boolean;
-	isAdmin: boolean;
-	isApproved: boolean;
-	uid: string;
-}
+import useAuth from "./helpers/useAuth";
+import { AuthProvider } from "./helpers/useAuth";
 
 declare global {
 	interface Window {
@@ -35,34 +26,22 @@ declare global {
 	}
 }
 
+function RequireAuth({ children }: { children: ReactElement }) {
+	const { loading } = useAuth();
+	const location = useLocation();
+
+	return <>
+		{loading ? <h2>Loading...</h2> : <>{
+			(store.getState().validauthtoken.value && store.getState().isApproved.value) !== "" ? (
+				children
+			) : (
+				<Navigate to="/login" replace state={{ path: location.pathname }} />
+			)}
+		</>}
+	</>
+}
+
 function App() {
-	useEffect(() => {
-		// Using an IIFE
-		(async () => {
-			console.log("Loaded");
-			const saved_auth_token = localStorage.getItem("auth_token");
-
-			if (saved_auth_token) {
-				console.log("Saved auth token: ", saved_auth_token);
-				const rjson = (await safe_fetch(
-					window.BASE_URL + "/api/auth/verify/" + saved_auth_token,
-					{
-						method: "GET",
-						headers: {},
-					}
-				)) as ValidatorResponse;
-
-				if (rjson.valid) {
-					console.log(rjson);
-					store.dispatch(setToken(saved_auth_token));
-					store.dispatch(setIsAdmin(rjson.isAdmin));
-					store.dispatch(setIsApproved(rjson.isApproved));
-					store.dispatch(setuid(rjson.uid));
-				}
-			}
-		})();
-	});
-
 	if (!import.meta.env.MODE || import.meta.env.MODE === "development") {
 		console.log("Dev");
 		window.BASE_URL = "http://127.0.0.1:5678";
@@ -72,27 +51,27 @@ function App() {
 	}
 
 	return (
-		<div>
+		<AuthProvider>
 			<Navbar />
 			<main>
 				<Routes>
 					<Route path="/" element={<Home />} />
 					<Route path="login" element={<Login />} />
 					<Route path="register" element={<Register />} />
-					<Route path="drafts" element={<Drafts />} />
-					<Route path="draft/:slug" element={<Draft_id />} />
-					<Route path="article/:slug" element={<EditProductionArticle />} />
-					<Route path="create_draft" element={<Create_draft />} />
+					<Route path="drafts" element={<RequireAuth><Drafts /></RequireAuth>} />
+					<Route path="draft/:slug" element={<RequireAuth><Draft_id /></RequireAuth>} />
+					<Route path="article/:slug" element={<RequireAuth><EditProductionArticle /></RequireAuth>} />
+					<Route path="create_draft" element={<RequireAuth><Create_draft /></RequireAuth>} />
 					<Route
 						path="create_staff"
-						element={<Create_Staff_Route />}
+						element={<RequireAuth><Create_Staff_Route /></RequireAuth>}
 					/>
 					<Route path="403" element={<Access_Denied />} />
 					<Route path="*" element={<Not_Found />} />
 				</Routes>
 			</main>
 			<ErrorModal />
-		</div>
+		</AuthProvider>
 	);
 }
 
