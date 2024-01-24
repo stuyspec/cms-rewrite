@@ -51,7 +51,7 @@ function Drafts() {
 						</Link>
 						<button
 							onClick={() => {
-								deleteDraft(item._id);
+								deleteDraft(item._id, validauthtoken);
 							}}
 						>
 							Delete

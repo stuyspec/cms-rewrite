@@ -1,8 +1,10 @@
 import "./ContributorPopUp.css";
 import { useState } from "react";
 import safe_fetch from "../../helpers/safe_fetch";
-import store from "../../store";
 import { setError } from "../../reducers/error";
+import useAuth from "../../helpers/useAuth";
+import store from "../../store";
+
 
 function ContributorPopUp({
 	selectedContributors,
@@ -10,6 +12,7 @@ function ContributorPopUp({
 	title,
 	max_contributors,
 }: any) {
+	const { loading, validauthtoken, isAdmin } = useAuth();
 	const [matchedContributors, setMatchedContributors] = useState<any>([]);
 
 	const load_contributors = async (fuzzy_name: string) => {
@@ -20,7 +23,7 @@ function ContributorPopUp({
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						"auth-token": store.getState().validauthtoken.value,
+						"auth-token": validauthtoken,
 					},
 					body: JSON.stringify({ fuzzy_name: fuzzy_name }),
 				}
@@ -56,8 +59,8 @@ function ContributorPopUp({
 				store.dispatch(
 					setError(
 						"There can only be a maximum of " +
-							String(max_contributors) +
-							" contributors"
+						String(max_contributors) +
+						" contributors"
 					)
 				);
 			}

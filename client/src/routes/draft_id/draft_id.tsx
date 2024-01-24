@@ -292,7 +292,7 @@ function EditDraftPage() {
 					<br />
 					<button
 						onClick={() => {
-							deleteDraft(draft._id);
+							deleteDraft(draft._id, validauthtoken);
 						}}
 					>
 						Delete
