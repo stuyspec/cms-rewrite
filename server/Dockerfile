@@ -1,7 +1,7 @@
-FROM node:18-alpine 
+FROM node:18
 
 # libc is needed for deps
-RUN apk add --no-cache libc6-compat vips-dev fftw-dev gcc g++ make 
+# RUN apk add --no-cache libc6-compat vips-dev fftw-dev gcc g++ make 
 
 # Create app directory
 WORKDIR /usr/src/app
