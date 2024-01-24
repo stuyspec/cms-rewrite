@@ -1,4 +1,3 @@
-import store from "../store";
 import safe_fetch from "./safe_fetch";
 
 interface UploadCoverImageResponse {
@@ -6,7 +5,7 @@ interface UploadCoverImageResponse {
 	public_url: string;
 }
 
-const upload_image_helper = async (uploaded_file: File) => {
+const upload_image_helper = async (uploaded_file: File, token: string) => {
 	const formData = new FormData();
 	formData.append("file", uploaded_file);
 	const uploaded_json = (await safe_fetch(
@@ -15,7 +14,7 @@ const upload_image_helper = async (uploaded_file: File) => {
 			method: "POST",
 			body: formData,
 			headers: {
-				"auth-token": store.getState().validauthtoken.value,
+				"auth-token": token,
 			},
 		}
 	)) as UploadCoverImageResponse;

@@ -4,9 +4,9 @@ import safe_fetch from "../../helpers/safe_fetch";
 import ContributorPopUp from "../../components/ContributorPopUp/ContributorPopUp";
 import Editor from "../../components/RichTextEditor/Editor";
 import useSWR from 'swr';
-import { useAppSelector } from "../../hooks";
-import store from "../../store";
 import "./edit_prod.css"
+import useAuth from "../../helpers/useAuth";
+
 
 const fetcher = (input: RequestInfo,
     token: string,
@@ -29,15 +29,13 @@ const fetcher = (input: RequestInfo,
 }
 
 export default function EditProd() {
-    const isAdmin = useAppSelector((state) => state.isAdmin.value);
-    const token = useAppSelector((state) => state.validauthtoken.value);
+    const { loading, validauthtoken, isAdmin } = useAuth();
 
     const { slug } = useParams();
 
-    console.log("DEBUG TOKEN: ", token)
 
     // const { data, error, isLoading } = useSWR(window.BASE_URL + "/api/db/get_aricle/" + slug, fetcher as any)
-    const { data, error, isLoading } = useSWR([window.BASE_URL + '/api/db/get_articles', token, slug], ([url, token, slug]) => fetcher(url, token, slug));
+    const { data, error, isLoading } = useSWR([window.BASE_URL + '/api/db/get_articles', validauthtoken, slug], ([url, token, slug]) => fetcher(url, token, slug));
 
     if (!isAdmin) {
         return <>

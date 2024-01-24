@@ -1,27 +1,22 @@
 import "./Navbar.css";
 import { Link } from "react-router-dom";
-
-import { useAppSelector } from "../../hooks";
-import store from "../../store";
-import { setToken } from "../../reducers/validAuthToken";
-
-async function signOut() {
-	store.dispatch(setToken(""));
-	localStorage.setItem("auth_token", "");
-	window.location.replace("/");
-}
+import useAuth from "../../helpers/useAuth";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
-	const validauthtoken = useAppSelector(
-		(state) => state.validauthtoken.value
-	);
-	const isapproved = useAppSelector((state) => state.isApproved.value);
+	const navigate = useNavigate();
+	const { validauthtoken, isApproved, logout } = useAuth();
+	async function signOut() {
+		localStorage.setItem("auth_token", "");
+		logout()
+		navigate("/")
+	}
 
 	return (
 		<div>
 			<nav>
 				{validauthtoken ? (
-					isapproved ? (
+					isApproved ? (
 						<Link to="/drafts">Drafts</Link>
 					) : (
 						<></>

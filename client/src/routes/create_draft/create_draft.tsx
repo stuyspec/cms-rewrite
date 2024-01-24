@@ -1,7 +1,6 @@
 import "./create_draft.css";
 import { useState } from "react";
 import Draft from "../../types/Draft";
-import store from "../../store";
 import upload_image_helper from "../../helpers/upload_image";
 // import { Editor } from "react-draft-wysiwyg";
 // import { Editor } from "../../components/Editor/Editor";
@@ -9,7 +8,7 @@ import Editor from "../../components/RichTextEditor/Editor";
 // import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 // import { EditorState, convertToRaw } from "draft-js";
 // import draftToHtml from "draftjs-to-html";
-import { useAppSelector } from "../../hooks";
+import useAuth from "../../helpers/useAuth";
 import safe_fetch from "../../helpers/safe_fetch";
 import ContributorPopUp from "../../components/ContributorPopUp/ContributorPopUp";
 
@@ -19,6 +18,8 @@ interface CreateDraftResponse {
 }
 
 function Create_Draft() {
+	const { loading, validauthtoken, isApproved } = useAuth();
+
 	// const [editorState, setEditorState] = useState(EditorState.createEmpty());
 	const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
 	const [selectedContributors, setSelectedContributors] = useState<any>([]);
@@ -104,7 +105,7 @@ function Create_Draft() {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					"auth-token": store.getState().validauthtoken.value,
+					"auth-token": validauthtoken,
 				},
 				body: JSON.stringify(body),
 			}
@@ -121,16 +122,12 @@ function Create_Draft() {
 		if (uploaded_files.length > 0) {
 			const uploaded_file = uploaded_files[0]; // always grab first
 			const public_url = (await upload_image_helper(
-				uploaded_file
+				uploaded_file, validauthtoken
 			)) as string;
 			setCoverImageURL(public_url);
 		}
 	};
 
-	const isapproved = useAppSelector((state) => {
-		if (!state.isApproved.value) window.location.href = "/403"; // inefficient, loads page *then* redirects, may need more R&D
-		return state.isApproved.value;
-	});
 
 	return (
 		<div>

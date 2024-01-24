@@ -2,6 +2,8 @@ import "./create_staff.css";
 import safe_fetch from "../../helpers/safe_fetch";
 import Staff from "../../types/Staff";
 import store from "../../store";
+import useAuth from "../../helpers/useAuth";
+import { useNavigate } from "react-router-dom";
 
 interface CreateStaffResponse {
 	message: string;
@@ -9,6 +11,9 @@ interface CreateStaffResponse {
 }
 
 function Create_Staff_Route() {
+	const navigate = useNavigate();
+	const { loading, validauthtoken, isApproved } = useAuth();
+
 	const create_staff_handler: any = async (e: any) => {
 		e.preventDefault();
 		console.log(e);
@@ -21,13 +26,13 @@ function Create_Staff_Route() {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					"auth-token": store.getState().validauthtoken.value,
+					"auth-token": validauthtoken,
 				},
 				body: JSON.stringify({ name, email }),
 			}
 		)) as CreateStaffResponse;
 		if (rjson?.staff?.slug) {
-			window.location.replace("/"); // dispatching done by /verify anyway
+			navigate("/")
 		}
 	};
 

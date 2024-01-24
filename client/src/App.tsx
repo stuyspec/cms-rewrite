@@ -27,12 +27,12 @@ declare global {
 }
 
 function RequireAuth({ children }: { children: ReactElement }) {
-	const { loading } = useAuth();
+	const { loading, validauthtoken, isApproved } = useAuth();
 	const location = useLocation();
 
 	return <>
 		{loading ? <h2>Loading...</h2> : <>{
-			(store.getState().validauthtoken.value && store.getState().isApproved.value) !== "" ? (
+			(validauthtoken && isApproved) !== "" ? (
 				children
 			) : (
 				<Navigate to="/login" replace state={{ path: location.pathname }} />
@@ -76,12 +76,8 @@ function App() {
 }
 
 function Home() {
-	const validauthtoken = useAppSelector(
-		(state) => state.validauthtoken.value
-	);
-	const isAdmin = useAppSelector((state) => state.isAdmin.value);
-	const isApproved = useAppSelector((state) => state.isApproved.value);
-	const uid = useAppSelector((state) => state.uid.value);
+	const { validauthtoken, isApproved, isAdmin, uid } = useAuth();
+
 
 	const approveUser = async (e: any) => {
 		e.preventDefault();
@@ -93,7 +89,7 @@ function Home() {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
-						"auth-token": store.getState().validauthtoken.value,
+						"auth-token": validauthtoken,
 					},
 					body: JSON.stringify({ uid: uid_submission }),
 				}

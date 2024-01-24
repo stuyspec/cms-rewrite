@@ -1,19 +1,10 @@
 import "./register.css";
-
-import { useAppDispatch } from "../../hooks";
-
-import { setToken } from "../../reducers/validAuthToken";
-import safe_fetch from "../../helpers/safe_fetch";
-
-interface RegisterResponse {
-	token: string;
-	logged_in: boolean;
-	uid: string;
-}
+import useAuth from "../../helpers/useAuth";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
-	const dispatch = useAppDispatch();
-
+	const { register } = useAuth();
+	const navigate = useNavigate()
 	const register_handler: any = async (e: any) => {
 		e.preventDefault();
 		console.log(e);
@@ -21,22 +12,9 @@ function Register() {
 		const password = e.target.elements["password"].value;
 		const name = e.target.elements["name"].value;
 
-		const rjson = (await safe_fetch(
-			window.BASE_URL + "/api/auth/register",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ email, password, name }),
-			}
-		)) as RegisterResponse;
+		await register(email, password, name);
 
-		if (rjson.logged_in) {
-			dispatch(setToken(rjson.token));
-			localStorage.setItem("auth_token", rjson.token);
-			window.location.replace("/");
-		}
+		navigate("/")
 	};
 
 	return (

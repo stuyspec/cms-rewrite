@@ -1,15 +1,14 @@
 import "./draft_id.css";
 import { useEffect, useState } from "react";
-import store from "../../store";
 import Draft from "../../types/Draft";
 import upload_image_helper from "../../helpers/upload_image";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import deleteDraft from "../../helpers/delete_draft";
 import handle_error from "../../helpers/handle_error";
 import safe_fetch from "../../helpers/safe_fetch";
 import ContributorPopUp from "../../components/ContributorPopUp/ContributorPopUp";
 import Editor from "../../components/RichTextEditor/Editor";
-import { useAppSelector } from "../../hooks";
+import useAuth from "../../helpers/useAuth";
 
 interface DraftsResponse {
 	drafts: Draft[];
@@ -17,8 +16,9 @@ interface DraftsResponse {
 }
 
 function EditDraftPage() {
+	const navigate = useNavigate();
+	const { loading, validauthtoken, isAdmin } = useAuth();
 	const { slug: draft_id } = useParams();
-	const isAdmin = useAppSelector((state) => state.isAdmin.value);
 
 	const [draft, setDraft] = useState<Draft | null>(null);
 	const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
@@ -62,7 +62,7 @@ function EditDraftPage() {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					"auth-token": store.getState().validauthtoken.value,
+					"auth-token": validauthtoken,
 				},
 				body: JSON.stringify({ _id: draft_id }),
 			}
@@ -120,30 +120,25 @@ function EditDraftPage() {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
-					"auth-token": store.getState().validauthtoken.value,
+					"auth-token": validauthtoken,
 				},
 				body: JSON.stringify({ draft_id: draft?._id, update: send }),
 			}
 		)) as { success: boolean };
 
 		if (rjson.success) {
-			location.reload();
+			console.log("Suceess! Reloading.");
+			navigate(0)
 		}
 	};
 
 	useEffect(() => {
 		(async () => {
-			if (store.getState().validauthtoken.value && draft == null) {
+			if (validauthtoken) {
 				await fetchDraft().catch(handle_error);
-			} else {
-				store.subscribe(async () => {
-					if (store.getState().validauthtoken.value) {
-						await fetchDraft().catch(handle_error);
-					}
-				});
 			}
 		})();
-	});
+	}, [validauthtoken]);
 	const upload_cover_image = async () => {
 		// In case event listener remains, or is triggered manually, etc
 		const uploaded_files = (
@@ -152,7 +147,7 @@ function EditDraftPage() {
 		if (uploaded_files.length > 0) {
 			const uploaded_file = uploaded_files[0]; // always grab first
 			const public_url = (await upload_image_helper(
-				uploaded_file
+				uploaded_file, validauthtoken
 			)) as string;
 			console.log(public_url);
 			setCoverImageURL(public_url);
@@ -167,7 +162,7 @@ function EditDraftPage() {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					"auth-token": store.getState().validauthtoken.value,
+					"auth-token": validauthtoken,
 				},
 				body: JSON.stringify({ draft_id: draft?._id }),
 			}

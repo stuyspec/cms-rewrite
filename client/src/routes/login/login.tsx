@@ -2,12 +2,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./login.css";
 import useAuth from "../../helpers/useAuth";
 
-
 function Login() {
 	const navigate = useNavigate();
 	const { login } = useAuth();
 	const { state } = useLocation();
-
 
 	const login_handler: any = async (e: any) => {
 		e.preventDefault();

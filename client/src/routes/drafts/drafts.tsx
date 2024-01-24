@@ -1,11 +1,11 @@
 import "./drafts.css";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import store from "../../store";
 import Draft from "../../types/Draft";
 import deleteDraft from "../../helpers/delete_draft";
 import handle_error from "../../helpers/handle_error";
 import safe_fetch from "../../helpers/safe_fetch";
+import useAuth from "../../helpers/useAuth";
 
 interface DraftsResponse {
 	drafts: Draft[];
@@ -13,6 +13,7 @@ interface DraftsResponse {
 }
 
 function Drafts() {
+	const { loading, validauthtoken, isAdmin } = useAuth();
 	const [drafts, setDrafts] = useState<Draft[] | null>(null);
 
 	const fetchDrafts = async () => {
@@ -22,7 +23,7 @@ function Drafts() {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					"auth-token": store.getState().validauthtoken.value,
+					"auth-token": validauthtoken,
 				},
 			}
 		)) as DraftsResponse;
@@ -32,24 +33,11 @@ function Drafts() {
 
 	useEffect(() => {
 		(async () => {
-			console.log(store.getState().validauthtoken.value);
-			if (store.getState().validauthtoken.value && drafts == null) {
+			if (validauthtoken) {
 				await fetchDrafts().catch(handle_error);
-			} else {
-				store.subscribe(async () => {
-					// TODO: optimize this subscription to reduce redundant requests (which happens a lot with the error state being in the store)
-					// how 2 ddos server 101: access this page with an unauthorized account
-					// which proceeds to get Forbiddens
-					// and due to the error state changes, it proceeds to do that on loop
-					// idea: set client-side cooldown, where cached draft is not invalidated for (at least a second?)
-					// ideally a server-side ratelimit is added too to avoid pain and suffering
-					if (store.getState().validauthtoken.value) {
-						await fetchDrafts().catch(handle_error);
-					}
-				});
 			}
 		})();
-	});
+	}, [validauthtoken]);
 
 	let genDrafts: any = <></>;
 	if (drafts != null) {
