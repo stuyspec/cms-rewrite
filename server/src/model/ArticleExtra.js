@@ -19,7 +19,7 @@ const articleExtraSchema = new mongoose.Schema({
         required: true,
     },
     index: {
-        type: String,
+        type: Number,
         required: true,
     },
     image_src: {

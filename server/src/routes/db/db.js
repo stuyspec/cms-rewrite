@@ -131,6 +131,46 @@ router.post("/create_draft", async (req, res, next) => {
 		next(error);
 	}
 });
+
+router.post("/update_article", isAdminMiddleware, async (req, res, next) => {
+	try {
+		const article_id = req.body.article_id;
+
+		if (!article_id) {
+			throw new Error("Article id must be specified!");
+		}
+
+		if (!req.body.text) {
+			throw new Error("Article text must be specified!");
+		}
+
+		const article = await Article.findById(article_id);
+		if (!article) {
+			res.status(404);
+			throw new Error("No article with that id found.");
+		}
+
+		await Article.findByIdAndUpdate(article_id, { text: req.body.text }, {
+			upsert: false,
+		})
+
+		// handle article extras
+		await ArticleExtra.deleteMany({ 'article': article_id });
+
+		const new_extras = req.body.article_extras;
+
+		let extras = await ArticleExtra.create(new_extras);
+
+		return res.json({
+			extras,
+			success: true
+		})
+
+	} catch (error) {
+		next(error);
+	}
+});
+
 const editMiddleware = async function (req, res, next) {
 	try {
 		if (!req.user.isApproved) {

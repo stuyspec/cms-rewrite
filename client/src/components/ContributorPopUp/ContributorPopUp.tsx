@@ -93,6 +93,7 @@ function ContributorPopUp({
 									&nbsp;&nbsp;|&nbsp;&nbsp;
 									<span>{matchedContributor.email}</span>
 									<button
+										type="button"
 										className="contributor_button"
 										onClick={async () => {
 											await select_contributor(index);
@@ -114,6 +115,7 @@ function ContributorPopUp({
 								&nbsp;&nbsp;|&nbsp;&nbsp;
 								<span>{selectedContributor.email}</span>
 								<button
+									type="button"
 									className="contributor_button"
 									onClick={async () => {
 										await unselect_contributor(index);

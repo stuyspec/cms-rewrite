@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import safe_fetch from "../../helpers/safe_fetch";
 import useSWR from 'swr';
 import "./edit_prod.css"
@@ -33,20 +33,40 @@ interface ArticlesResponse {
 
 export default function EditProd() {
     const { slug } = useParams();
+    const navigate = useNavigate();
     const { loading, validauthtoken, isAdmin } = useAuth();
     const [text, setText] = useState("");
     const [articleExtras, setArticleExtras] = useState<ArticleExtra[] | null>(null);
 
     const { data, error, isLoading } = useSWR<ArticlesResponse>([window.BASE_URL + '/api/db/get_article', validauthtoken, slug], ([url, token, slug]) => fetcher(url, token as string, slug as string));
 
-    const updateArticle = (e: React.FormEvent<HTMLFormElement>) => {
+    const updateArticle = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (text == "" && articleExtras == null) {
             // means no change has occurred from the article text in the db!
             return;
         }
 
-        console.log("Updating time...")
+        const rjson = (await safe_fetch(
+            window.BASE_URL + "/api/db/update_article",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "auth-token": validauthtoken,
+                },
+                body: JSON.stringify({
+                    article_id: data?.article._id,
+                    text: text || article.text,
+                    article_extras: (articleExtras != null) ? articleExtras : data?.article_extras
+                }),
+            }
+        ));
+
+        if (rjson.success) {
+            console.log("Suceess! Reloading.");
+            navigate(0)
+        }
     }
 
     if (!isAdmin) {
