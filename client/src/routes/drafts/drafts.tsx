@@ -39,34 +39,30 @@ function Drafts() {
 		})();
 	}, [validauthtoken]);
 
-	let genDrafts: any = <></>;
-	if (drafts != null) {
-		genDrafts =
-			drafts.length > 0 ? (
-				drafts.map((item, _) => (
-					<div className="draft_quickview" key={item._id}>
-						<Link to={"/draft/" + item._id}>
-							<h2>{item.title}</h2>
-							<h3>{item.summary}</h3>
-						</Link>
-						<button
-							onClick={() => {
-								deleteDraft(item._id, validauthtoken);
-							}}
-						>
-							Delete
-						</button>
-					</div>
-				))
-			) : (
-				<h2>There have been no drafts!</h2>
-			);
-	}
-
 	return (
 		<div>
 			<h1>All drafts:</h1>
-			{genDrafts}
+			<section id="drafts-list">
+				{(drafts && drafts.length > 0) ? (
+					drafts.map((item, _) => (
+						<div className="draft_quickview" key={item._id}>
+							<Link to={"/draft/" + item._id}>
+								<h2>{item.title}</h2>
+							</Link>
+							<p>{item.summary}</p>
+							<button
+								onClick={() => {
+									deleteDraft(item._id, validauthtoken);
+								}}
+							>
+								Delete
+							</button>
+						</div>
+					))
+				) : (
+					<h2>There have been no drafts!</h2>
+				)}
+			</section>
 		</div>
 	);
 }
