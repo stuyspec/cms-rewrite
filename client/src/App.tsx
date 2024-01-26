@@ -10,10 +10,9 @@ import Create_Staff_Route from "./routes/create_staff/create_staff";
 import EditProductionArticle from "./routes/edit_prod/edit_prod";
 import Access_Denied from "./routes/403/403";
 import Not_Found from "./routes/404/404";
-import { Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, Link, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { ReactElement, ReactNode, useEffect } from "react";
 import store from "./store";
-import { useAppSelector } from "./hooks";
 import ErrorModal from "./components/ErrorModal/ErrorModal";
 import { setError } from "./reducers/error";
 import safe_fetch from "./helpers/safe_fetch";
@@ -77,7 +76,7 @@ function App() {
 
 function Home() {
 	const { validauthtoken, isApproved, isAdmin, uid } = useAuth();
-
+	const navigate = useNavigate();
 
 	const approveUser = async (e: any) => {
 		e.preventDefault();
@@ -101,6 +100,14 @@ function Home() {
 			store.dispatch(setError("Non-admins cannot approve users!"));
 		}
 	};
+
+	const goToProductionArticle = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		// @ts-ignore
+		const slug = e.target.elements["slug"].value;
+
+		navigate("/article/" + slug);
+	}
 	return (
 		<main id="home_main">
 			<h1>Home</h1>
@@ -134,6 +141,17 @@ function Home() {
 									Create a contributor
 								</Link>
 							</h3>
+							<h3>Edit a production article</h3>
+							<form onSubmit={goToProductionArticle}>
+								<p>Enter the slug of the production article:</p>
+								<input
+									type="text"
+									name="slug"
+									placeholder="enter the slug"
+								/>
+								<br />
+								<input type="submit" />
+							</form>
 						</div>
 					) : (
 						<></>

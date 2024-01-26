@@ -1,12 +1,10 @@
 import { useParams } from "react-router-dom";
-import handle_error from "../../helpers/handle_error";
 import safe_fetch from "../../helpers/safe_fetch";
-import ContributorPopUp from "../../components/ContributorPopUp/ContributorPopUp";
-import Editor from "../../components/RichTextEditor/Editor";
 import useSWR from 'swr';
 import "./edit_prod.css"
 import useAuth from "../../helpers/useAuth";
-
+import Article from "../../types/Article";
+import { useState } from "react";
 
 const fetcher = (input: RequestInfo,
     token: string,
@@ -22,33 +20,57 @@ const fetcher = (input: RequestInfo,
             "Content-Type": "application/json",
             "auth-token": token,
         },
-        body: JSON.stringify({
-            slug: slug
-        }),
+        body: JSON.stringify({ slug }),
     })
 }
 
+interface ArticlesResponse {
+    articles: Article[];
+    description: string;
+}
+
 export default function EditProd() {
-    const { loading, validauthtoken, isAdmin } = useAuth();
-
     const { slug } = useParams();
+    const { loading, validauthtoken, isAdmin } = useAuth();
+    const [text, setText] = useState("");
 
+    const { data, error, isLoading } = useSWR<ArticlesResponse>([window.BASE_URL + '/api/db/get_articles', validauthtoken, slug], ([url, token, slug]) => fetcher(url, token, slug));
 
-    // const { data, error, isLoading } = useSWR(window.BASE_URL + "/api/db/get_aricle/" + slug, fetcher as any)
-    const { data, error, isLoading } = useSWR([window.BASE_URL + '/api/db/get_articles', validauthtoken, slug], ([url, token, slug]) => fetcher(url, token, slug));
-
-    if (!isAdmin) {
-        return <>
-            <h1>Non-admins can't view this page!</h1>
-        </>
+    const updateArticle = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (text == "") {
+            // means no change has occurred from the article text in the db!
+            return;
+        }
     }
 
+    if (!isAdmin) {
+        return <h1>Non-admins can't view this page!</h1>
+    }
+
+    if (isLoading) {
+        return <h2>Loading...</h2>
+    }
+
+    if (error || !data) {
+        return <h1>An unknown error occurred while fetching the article.</h1>
+    }
+
+    if (!isLoading && data?.articles.length == 0) {
+        return <h2>No articles found with the slug of <code>"{slug}"</code>!</h2>
+    }
+
+    let article = data?.articles[0];
+    article.text = article.text.replaceAll("</p><", "</p>\n\n<"); // for visual change, no difference
 
     return <>
         <main id="edit_prod">
             <h1>Edit a Production Article</h1>
             <h2>Slug: {slug}</h2>
-            <pre>Data: {JSON.stringify(data, null, 2)}</pre>
+            <form onSubmit={updateArticle}>
+                <textarea name="text" id="article-text" value={text || article.text} rows={30} cols={80} onChange={(e) => setText(e.target.value)}></textarea>
+                <input type="submit" value="Update production article" />
+            </form>
         </main>
     </>
 }

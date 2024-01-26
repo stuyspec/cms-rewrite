@@ -63,7 +63,7 @@ function useAuth() {
 				)) as ValidatorResponse;
 
 				if (rjson.valid) {
-					console.log("Verified user: ", rjson);
+					// console.log("Verified user: ", rjson);
 					setValidAuthToken(saved_auth_token);
 					setIsAdmin(rjson.isAdmin);
 					setIsApproved(rjson.isApproved);

@@ -40,7 +40,7 @@ const articleSchema = new mongoose.Schema({
 		type: String,
 	},
 	cover_image_contributor: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: [mongoose.Schema.Types.ObjectId],
 		ref: StaffModel.modelName,
 	},
 	is_published: {
@@ -50,6 +50,9 @@ const articleSchema = new mongoose.Schema({
 	sub_section: {
 		type: String,
 	},
+	rank: {
+		type: Number
+	}
 });
 
 const articleModelfordb = mongoose.model("article", articleSchema);

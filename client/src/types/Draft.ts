@@ -12,7 +12,7 @@ export default interface Draft {
 	summary: string;
 	cover_image: string;
 	cover_image_summary: string;
-	cover_image_contributor: Staff;
+	cover_image_contributor: Staff[];
 	cover_image_source: string;
 	sub_section: string | undefined;
 }
