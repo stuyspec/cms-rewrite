@@ -5,7 +5,7 @@ export default interface ArticleExtra {
     _id: string;
     article: Article;
     contributors: Staff[];
-    type: string;
+    type: "image";
     index: number;
     image_src: string;
 }

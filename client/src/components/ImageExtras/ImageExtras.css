@@ -1,0 +1,15 @@
+.image-extras {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+}
+
+.image-extra {
+    width: 95%;
+    background-color: rgb(235, 235, 235);
+}
+
+.image-extra img {
+    width: 50%;
+}

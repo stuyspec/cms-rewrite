@@ -6,6 +6,7 @@ import useAuth from "../../helpers/useAuth";
 import Article from "../../types/Article";
 import { useState } from "react";
 import ArticleExtra from "../../types/ArticleExtra";
+import ImageExtras from "../../components/ImageExtras/ImageExtras";
 
 const fetcher = (input: RequestInfo,
     token: string,
@@ -34,15 +35,18 @@ export default function EditProd() {
     const { slug } = useParams();
     const { loading, validauthtoken, isAdmin } = useAuth();
     const [text, setText] = useState("");
+    const [articleExtras, setArticleExtras] = useState<ArticleExtra[] | null>(null);
 
     const { data, error, isLoading } = useSWR<ArticlesResponse>([window.BASE_URL + '/api/db/get_article', validauthtoken, slug], ([url, token, slug]) => fetcher(url, token as string, slug as string));
 
     const updateArticle = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (text == "") {
+        if (text == "" && articleExtras == null) {
             // means no change has occurred from the article text in the db!
             return;
         }
+
+        console.log("Updating time...")
     }
 
     if (!isAdmin) {
@@ -65,7 +69,9 @@ export default function EditProd() {
             <h1>Edit a Production Article</h1>
             <h2>Slug: {slug}</h2>
             <form onSubmit={updateArticle}>
+                <p>Article text:</p>
                 <textarea name="text" className="article-text" value={text || article.text} onChange={(e) => setText(e.target.value)}></textarea>
+                <ImageExtras article_extras={(articleExtras != null) ? articleExtras : data.article_extras} setArticleExtras={setArticleExtras} />
                 <input type="submit" value="Update production article" />
             </form>
 
@@ -75,7 +81,6 @@ export default function EditProd() {
                 <code>{'<div class="content_img"></div>'}</code>
             </section>
 
-            <pre>{JSON.stringify(data.article_extras, null, 2)}</pre>
         </main>
     </>
 }
