@@ -4,6 +4,8 @@ import Staff from "../../types/Staff";
 import ContributorPopUp from "../ContributorPopUp/ContributorPopUp";
 import "./ImageExtras.css"
 import Article from "../../types/Article";
+import UploadImageHelper from "../UploadImageHelper/UploadImageHelper";
+import useAuth from "../../helpers/useAuth";
 
 interface Props {
     article_extras: ArticleExtra[];
@@ -12,6 +14,8 @@ interface Props {
 }
 
 export default function ImageExtras({ article_extras, setArticleExtras, article }: Props) {
+    const { validauthtoken } = useAuth();
+
     const [newIndex, setNewIndex] = useState(0);
     const [newContributors, setNewContributors] = useState<Staff[]>([]);
     const [newImgSource, setNewImageSource] = useState("");
@@ -72,7 +76,7 @@ export default function ImageExtras({ article_extras, setArticleExtras, article 
         </section>
         <section className="new-image-extra">
             <h2>Create a new image extra:</h2>
-            <img src={newImgSource} alt="Image extra for article" />
+            <UploadImageHelper imageSource={newImgSource} setImageSource={setNewImageSource} validauthtoken={validauthtoken} />
             <ContributorPopUp
                 selectedContributors={
                     newContributors

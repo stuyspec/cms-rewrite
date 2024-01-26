@@ -8,6 +8,7 @@ const ArticleExtra = require("../../model/ArticleExtra");
 const { draftValidation, createStaffValidation } = require("../../validation");
 const sharp = require("sharp");
 const s3 = require("../../aws");
+const mongoose = require('mongoose'); // only used for bson id generation, other mongoose setup is in index.js
 
 const uuidv1 = require("uuid").v1;
 
@@ -157,7 +158,7 @@ router.post("/update_article", isAdminMiddleware, async (req, res, next) => {
 		// handle article extras
 		await ArticleExtra.deleteMany({ 'article': article_id });
 
-		const new_extras = req.body.article_extras;
+		const new_extras = req.body.article_extras.map(v => { return { ...v, _id: new mongoose.Types.ObjectId() } });
 
 		let extras = await ArticleExtra.create(new_extras);
 
