@@ -4,6 +4,7 @@ const router = require("express").Router();
 const Article = require("../../model/Article");
 const Staff = require("../../model/Staff");
 const Draft = require("../../model/Draft");
+const ArticleExtra = require("../../model/ArticleExtra");
 const { draftValidation, createStaffValidation } = require("../../validation");
 const sharp = require("sharp");
 const s3 = require("../../aws");
@@ -15,6 +16,11 @@ router.use(verifyTokenMiddlware);
 router.get("/", async (req, res) => {
 	res.json({ message: "Index for db" });
 });
+
+// get one article
+router.get("/get_article", isAdminMiddleware, getArticleHandler);
+router.post("/get_article", isAdminMiddleware, getArticleHandler);
+
 
 // Get all articles
 router.get("/get_articles", get_articles_handler);
@@ -71,6 +77,35 @@ async function get_articles_handler(req, res, next) {
 			articles: articles,
 			description: "Successfully retrieved articles.",
 		});
+	} catch (error) {
+		next(error);
+	}
+}
+
+
+async function getArticleHandler(req, res, next) {
+	try {
+		const slug = req.body.slug;
+		if (!slug) {
+			res.status(400);
+			throw new Error("A slug must be provided to fetch article.");
+		}
+
+		const articles = await get_articles({ slug });
+		if (articles.length == 0) {
+			res.status(404);
+			throw new Error("No article with that slug found.");
+		}
+
+		const article = articles[0];
+
+		const article_extras = await ArticleExtra.find({ 'article': article._id }).populate({ path: "contributors", select: "-password" });
+
+		return res.json({
+			article,
+			article_extras
+		})
+
 	} catch (error) {
 		next(error);
 	}

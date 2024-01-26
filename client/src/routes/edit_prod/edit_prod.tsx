@@ -5,6 +5,7 @@ import "./edit_prod.css"
 import useAuth from "../../helpers/useAuth";
 import Article from "../../types/Article";
 import { useState } from "react";
+import ArticleExtra from "../../types/ArticleExtra";
 
 const fetcher = (input: RequestInfo,
     token: string,
@@ -25,8 +26,8 @@ const fetcher = (input: RequestInfo,
 }
 
 interface ArticlesResponse {
-    articles: Article[];
-    description: string;
+    article: Article;
+    article_extras: ArticleExtra[];
 }
 
 export default function EditProd() {
@@ -34,7 +35,7 @@ export default function EditProd() {
     const { loading, validauthtoken, isAdmin } = useAuth();
     const [text, setText] = useState("");
 
-    const { data, error, isLoading } = useSWR<ArticlesResponse>([window.BASE_URL + '/api/db/get_articles', validauthtoken, slug], ([url, token, slug]) => fetcher(url, token as string, slug as string));
+    const { data, error, isLoading } = useSWR<ArticlesResponse>([window.BASE_URL + '/api/db/get_article', validauthtoken, slug], ([url, token, slug]) => fetcher(url, token as string, slug as string));
 
     const updateArticle = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -56,11 +57,7 @@ export default function EditProd() {
         return <h1>An unknown error occurred while fetching the article.</h1>
     }
 
-    if (!isLoading && data?.articles.length == 0) {
-        return <h2>No articles found with the slug of <code>"{slug}"</code>!</h2>
-    }
-
-    let article = data?.articles[0];
+    let article = data.article;
     article.text = article.text.replaceAll("</p><", "</p>\n\n<"); // for visual change, no difference
 
     return <>
@@ -77,6 +74,8 @@ export default function EditProd() {
                 <p>To create an image within the body, use:</p>
                 <code>{'<div class="content_img"></div>'}</code>
             </section>
+
+            <pre>{JSON.stringify(data.article_extras, null, 2)}</pre>
         </main>
     </>
 }
