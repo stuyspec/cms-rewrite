@@ -39,12 +39,15 @@ function Drafts() {
 		})();
 	}, [validauthtoken]);
 
+	if (drafts == null) {
+		return <h2>Loading...</h2>
+	}
+
 	return (
 		<div>
-			{drafts ? <h1>All drafts:</h1> : <h2>Loading...</h2>}
-
+			<h1>All drafts:</h1>
 			<section id="drafts-list">
-				{(drafts && drafts.length > 0) ? (
+				{(drafts.length > 0) ? (
 					drafts.map((item, _) => (
 						<div className="draft_quickview" key={item._id}>
 							<Link to={"/draft/" + item._id}>
