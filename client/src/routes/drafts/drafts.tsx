@@ -41,7 +41,8 @@ function Drafts() {
 
 	return (
 		<div>
-			<h1>All drafts:</h1>
+			{drafts ? <h1>All drafts:</h1> : <h2>Loading...</h2>}
+
 			<section id="drafts-list">
 				{(drafts && drafts.length > 0) ? (
 					drafts.map((item, _) => (
