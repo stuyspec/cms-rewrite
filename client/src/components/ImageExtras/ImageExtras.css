@@ -10,6 +10,16 @@
     background-color: rgb(235, 235, 235);
 }
 
-.image-extra img {
+.new-image-extra {
+    width: 95%;
+    background-color: rgb(225, 245, 235);
+}
+
+.image-extra img, .new-image-extra img{
     width: 50%;
+}
+
+.new-image-extra{
+    margin-block: 2rem;
+    margin-inline : auto;
 }

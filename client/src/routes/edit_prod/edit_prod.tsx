@@ -91,7 +91,7 @@ export default function EditProd() {
             <form onSubmit={updateArticle}>
                 <p>Article text:</p>
                 <textarea name="text" className="article-text" value={text || article.text} onChange={(e) => setText(e.target.value)}></textarea>
-                <ImageExtras article_extras={(articleExtras != null) ? articleExtras : data.article_extras} setArticleExtras={setArticleExtras} />
+                <ImageExtras article={article} article_extras={(articleExtras != null) ? articleExtras : data.article_extras} setArticleExtras={setArticleExtras} />
                 <input type="submit" value="Update production article" />
             </form>
 
