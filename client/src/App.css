@@ -10,10 +10,11 @@ main {
 	margin: auto;
 }
 
-#home_main #create_draft_div {
-	margin-top: 20px;
-}
 
 #home_main #create_staff_link {
 	margin-top: 20px;
+}
+
+.home-form {
+	margin-block : 1.5rem;
 }

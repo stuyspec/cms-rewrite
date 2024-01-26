@@ -1,4 +1,3 @@
-// App.js
 import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
 import Login from "./routes/login/login";
@@ -111,27 +110,29 @@ function Home() {
 	return (
 		<main id="home_main">
 			<h1>Home</h1>
-			<h3>UID: {uid}</h3>
 			{validauthtoken ? (
 				<div>
-					{!isApproved ? (
-						<h1>
-							YOU NEED TO REQUEST ACCOUNT VERIFICATION FROM A STUY
-							SPEC ADMIN
-						</h1>
-					) : (
-						<></>
-					)}
-					<p>Logged in!</p>
+					<h3>UID: {uid}</h3>
 					<p>Is admin: {String(isAdmin)}</p>
-					{isAdmin ? (
+					{isAdmin && (
 						<div>
-							<h3>Approve a user:</h3>
-							<form onSubmit={approveUser}>
+							<form onSubmit={approveUser} className="home-form">
+								<h3>Approve a user:</h3>
 								<input
 									type="text"
 									name="uid"
 									placeholder="UID"
+								/>
+								<br />
+								<input type="submit" />
+							</form>
+							<form onSubmit={goToProductionArticle} className="home-form">
+								<h3>Edit a production article</h3>
+								<p>Enter the slug of the production article:</p>
+								<input
+									type="text"
+									name="slug"
+									placeholder="enter-the-slug"
 								/>
 								<br />
 								<input type="submit" />
@@ -141,20 +142,7 @@ function Home() {
 									Create a contributor
 								</Link>
 							</h3>
-							<h3>Edit a production article</h3>
-							<form onSubmit={goToProductionArticle}>
-								<p>Enter the slug of the production article:</p>
-								<input
-									type="text"
-									name="slug"
-									placeholder="enter the slug"
-								/>
-								<br />
-								<input type="submit" />
-							</form>
 						</div>
-					) : (
-						<></>
 					)}
 
 					{isApproved ? (
@@ -164,12 +152,15 @@ function Home() {
 							</h1>
 						</div>
 					) : (
-						<></>
+						<h1>
+							YOU NEED TO REQUEST ACCOUNT VERIFICATION FROM A STUY
+							SPEC ADMIN
+						</h1>
 					)}
 				</div>
 			) : (
 				<div>
-					<p>Not logged in. Please log in.</p>
+					<p>Not logged in. Please <Link to="/login">log in.</Link></p>
 				</div>
 			)}
 		</main>

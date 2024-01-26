@@ -34,7 +34,7 @@ export default function EditProd() {
     const { loading, validauthtoken, isAdmin } = useAuth();
     const [text, setText] = useState("");
 
-    const { data, error, isLoading } = useSWR<ArticlesResponse>([window.BASE_URL + '/api/db/get_articles', validauthtoken, slug], ([url, token, slug]) => fetcher(url, token, slug));
+    const { data, error, isLoading } = useSWR<ArticlesResponse>([window.BASE_URL + '/api/db/get_articles', validauthtoken, slug], ([url, token, slug]) => fetcher(url, token as string, slug as string));
 
     const updateArticle = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -68,9 +68,15 @@ export default function EditProd() {
             <h1>Edit a Production Article</h1>
             <h2>Slug: {slug}</h2>
             <form onSubmit={updateArticle}>
-                <textarea name="text" id="article-text" value={text || article.text} rows={30} cols={80} onChange={(e) => setText(e.target.value)}></textarea>
+                <textarea name="text" className="article-text" value={text || article.text} onChange={(e) => setText(e.target.value)}></textarea>
                 <input type="submit" value="Update production article" />
             </form>
+
+            <section>
+                <h2>Notes:</h2>
+                <p>To create an image within the body, use:</p>
+                <code>{'<div class="content_img"></div>'}</code>
+            </section>
         </main>
     </>
 }
