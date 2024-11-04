@@ -10,6 +10,7 @@ import ContributorPopUp from "../../components/ContributorPopUp/ContributorPopUp
 import Editor from "../../components/RichTextEditor/Editor";
 import useAuth from "../../helpers/useAuth";
 import subSections from "../../helpers/subSections";
+import { setError } from "../../reducers/error";
 
 interface DraftsResponse {
 	drafts: Draft[];
@@ -100,6 +101,12 @@ function EditDraftPage() {
 			}
 		)) as { success: boolean };
 
+		return rjson;
+	}
+
+	const submitEditHandler = async () => {
+		const rjson = await submitEdit();
+
 		if (rjson.success) {
 			console.log("Suceess! Reloading.");
 			navigate(0)
@@ -130,6 +137,13 @@ function EditDraftPage() {
 
 	const publishDraft = async () => {
 		console.log("Publish Draft");
+
+		const rjson_edit = await submitEdit();
+		if (!rjson_edit.success) {
+			setError("Editing was unsuccessful before publishing.");
+			return;
+		}
+
 		const rjson = await safe_fetch(
 			window.BASE_URL + "/api/db/publish_article",
 			{
@@ -260,7 +274,7 @@ function EditDraftPage() {
 							/>
 						</h3>
 					</div>
-					<button id="submit_edit_button" onClick={submitEdit}>
+					<button id="submit_edit_button" onClick={submitEditHandler}>
 						Submit the edit
 					</button>
 					<br />
