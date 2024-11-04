@@ -11,6 +11,7 @@ import Editor from "../../components/RichTextEditor/Editor";
 import useAuth from "../../helpers/useAuth";
 import safe_fetch from "../../helpers/safe_fetch";
 import ContributorPopUp from "../../components/ContributorPopUp/ContributorPopUp";
+import subSections from "../../helpers/subSections";
 
 interface CreateDraftResponse {
 	draft: Draft;
@@ -27,33 +28,6 @@ function Create_Draft() {
 		useState<any>([]);
 	const [html, setHTML] = useState("");
 	const [subSection, setSubSection] = useState<string>("");
-	const subSections = [
-		"art",
-		"theater",
-		"stc",
-		"financial-literacy",
-		"comics",
-		"music",
-		"voices",
-		"sports-at-stuyvesant",
-		"campaign-coverage",
-		"1031-terror-attack",
-		"black-lives-matter",
-		"professional-sports",
-		"film",
-		"literature",
-		"spooktator",
-		"disrespectator",
-		"staff-editorials",
-		"television",
-		"fashion",
-		"lifestuyle",
-		"culture",
-		"food",
-		"thinkpiece",
-		"9-11",
-		"sing!",
-	]; // todo: dynamic definition
 
 	const new_draft_handler = async () => {
 		// console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
