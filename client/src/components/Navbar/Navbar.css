@@ -4,7 +4,20 @@ nav {
 	display: flex;
 	align-items: center; /* Align center on Y axis */
 	justify-content: center; /* Align center on X axis */
-	gap : 40px;
+	gap: 5px;
+	color: white;
+	background-color: #3D405B;
+}
+
+nav a {
+	padding: 10px 25px;
+	text-align: center;
+	text-decoration: underline;
+}
+
+nav a:hover {
+	background-color: #52567a;
+	color: white;
 }
 
 nav > * {
@@ -15,4 +28,5 @@ nav > * {
 
 a {
 	color: var(--text-primary);
+	padding: 0px;
 }
