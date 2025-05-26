@@ -27,8 +27,6 @@ const fetcher = (
     body: JSON.stringify({ slug }),
   });
 
-  console.log(response);
-
   return response;
 };
 
