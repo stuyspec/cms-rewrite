@@ -38,7 +38,7 @@ interface ArticlesResponse {
 export default function EditProd() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { _, validauthtoken, isAdmin } = useAuth();
+  const { loading, validauthtoken, isAdmin } = useAuth();
   const [articleExtras, setArticleExtras] = useState<ArticleExtra[] | null>(
     null,
   );
