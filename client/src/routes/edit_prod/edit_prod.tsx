@@ -1,3 +1,4 @@
+import ContributorPopUp from "../../components/ContributorPopUp/ContributorPopUp";
 import { useNavigate, useParams } from "react-router-dom";
 import safe_fetch from "../../helpers/safe_fetch";
 import useSWR from "swr";
@@ -51,7 +52,11 @@ export default function EditProd() {
   const [article, setArticle] = useState({} as Article);
 
   useEffect(() => {
-    data && setArticle(data.article);
+    if (data) {
+      console.log(data.article);
+      data.article.text = data.article.text.replaceAll("</p><", "</p>\n\n<");
+      setArticle(data.article);
+    }
   }, [data]);
 
   const updateArticle = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -60,8 +65,6 @@ export default function EditProd() {
       // means no change has occurred from the article text in the db!
       return;
     }
-
-    console.log(article);
 
     const rjson = await safe_fetch(window.BASE_URL + "/api/db/update_article", {
       method: "POST",
@@ -155,6 +158,16 @@ export default function EditProd() {
             value={article.issue || 0}
             onChange={(e) => setArticle({ ...article, issue: +e.target.value })}
           />
+
+          <ContributorPopUp
+            selectedContributors={article.contributors || []}
+            setSelectedContributors={(v: any) => {
+              console.log(v);
+              setArticle({ ...article, contributors: v });
+            }}
+            title="Article Contributors:"
+          ></ContributorPopUp>
+
           <p>Article text:</p>
 
           <textarea
