@@ -226,9 +226,13 @@ function EditDraftPage() {
 							max_contributors={1}
 						></ContributorPopUp>
 						{/* <textarea id="text" defaultValue={draft.text} /> */}
-						<div className="formattedEditor">
-							<Editor setHTML={setHTML} htmlString={draft.text} />
-						</div>
+						<h3>
+							Summary: &nbsp;
+							<textarea
+								defaultValue={draft.summary}
+								id="edit_summary"
+							/>
+						</h3>
 						<h3>
 							Section:&nbsp;
 							<select
@@ -239,11 +243,11 @@ function EditDraftPage() {
 								<option value="1">Features</option>
 								<option value="2">Opinions</option>
 								<option value="3">Science</option>
-								<option value="4">Humor</option>
-								<option value="5">Sports</option>
-								<option value="6">
+								<option value="4">
 									Arts and Entertainment
 								</option>
+								<option value="5">Humor</option>
+								<option value="6">Sports</option>
 								<option value="7">Media</option>
 								<option value="8">Spec+</option>
 							</select>
@@ -252,27 +256,32 @@ function EditDraftPage() {
 							sub_section: &nbsp;
 							<select
 								onChange={(e) => {
-									setSubSection(e.target.value);
+								setSubSection(e.target.value);
 								}}
 								value={subSection}
+								defaultValue={draft.sub_section} //please double check this, because it didn't exist in the previous version of subsection, but i added it because i figure it must exist right???
+								//also i couldn't get the server to work to check it myself lol
 							>
 								<option value="" />
-								{subSections.map((v_substr: string) => {
+								{
+								subSections.map((v_substr: string[]) => {
 									return (
-										<option key={v_substr} value={v_substr}>
-											{v_substr}
-										</option>
+									<optgroup label={v_substr[0]}>
+										{v_substr.slice(1).map((otherv_substr: string) => {
+										return (
+											<option key={otherv_substr} value={otherv_substr}>
+											{otherv_substr}
+											</option>
+										)
+										})}
+									</optgroup>
 									);
 								})}
 							</select>
 						</h3>
-						<h3>
-							Summary: &nbsp;
-							<textarea
-								defaultValue={draft.summary}
-								id="edit_summary"
-							/>
-						</h3>
+						<div className="formattedEditor">
+							<Editor setHTML={setHTML} htmlString={draft.text} />
+						</div>
 					</div>
 					<button id="submit_edit_button" onClick={submitEditHandler}>
 						Submit the edit
