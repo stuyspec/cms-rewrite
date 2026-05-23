@@ -141,9 +141,9 @@ function Create_Draft() {
           <option value="1">Features</option>
           <option value="2">Opinions</option>
           <option value="3">Science</option>
-          <option value="4">Humor</option>
-          <option value="5">Sports</option>
-          <option value="6">Arts and Entertainment</option>
+          <option value="4">Arts and Entertainment</option>
+          <option value="5">Humor</option>
+          <option value="6">Sports</option>
           <option value="7">Media</option>
           <option value="8">Spec+</option>
         </select>
@@ -156,13 +156,20 @@ function Create_Draft() {
             value={subSection}
           >
             <option value="" />
-            {subSections.map((v_substr: string) => {
-              return (
-                <option key={v_substr} value={v_substr}>
-                  {v_substr}
-                </option>
-              );
-            })}
+            {
+              subSections.map((v_substr: string[]) => {
+                return (
+                  <optgroup label={v_substr[0]}>
+                    {v_substr.slice(1).map((otherv_substr: string) => {
+                      return (
+                        <option key={otherv_substr} value={otherv_substr}>
+                          {otherv_substr}
+                        </option>
+                      )
+                    })}
+                  </optgroup>
+                );
+              })}
           </select>
         </h3>
         <h3>The article text:</h3>
