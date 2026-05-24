@@ -231,6 +231,7 @@ function EditDraftPage() {
 							<textarea
 								defaultValue={draft.summary}
 								id="edit_summary"
+								rows={5} cols={33}
 							/>
 						</h3>
 						<h3>
@@ -243,11 +244,11 @@ function EditDraftPage() {
 								<option value="1">Features</option>
 								<option value="2">Opinions</option>
 								<option value="3">Science</option>
-								<option value="4">
+								<option value="6">
 									Arts and Entertainment
 								</option>
-								<option value="5">Humor</option>
-								<option value="6">Sports</option>
+								<option value="4">Humor</option>
+								<option value="5">Sports</option>
 								<option value="7">Media</option>
 								<option value="8">Spec+</option>
 							</select>

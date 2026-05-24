@@ -19,7 +19,7 @@ interface CreateDraftResponse {
 }
 
 function Create_Draft() {
-  const { loading, validauthtoken, isApproved } = useAuth();
+  const { loading, validauthtoken, isAdmin } = useAuth();
 
   // const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
@@ -133,7 +133,7 @@ function Create_Draft() {
         ></ContributorPopUp>
         <h3>
           Summary: &nbsp;
-          <textarea id="new_summary" />
+          <textarea id="new_summary" rows={5} cols={33} />
         </h3>
         <h3>Section:&nbsp;</h3>
         <select id="new_section">
@@ -141,9 +141,9 @@ function Create_Draft() {
           <option value="1">Features</option>
           <option value="2">Opinions</option>
           <option value="3">Science</option>
-          <option value="4">Arts and Entertainment</option>
-          <option value="5">Humor</option>
-          <option value="6">Sports</option>
+          <option value="6">Arts and Entertainment</option>
+          <option value="4">Humor</option>
+          <option value="5">Sports</option>
           <option value="7">Media</option>
           <option value="8">Spec+</option>
         </select>
