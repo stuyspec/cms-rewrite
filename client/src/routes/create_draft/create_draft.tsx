@@ -19,7 +19,7 @@ interface CreateDraftResponse {
 }
 
 function Create_Draft() {
-  const { loading, validauthtoken, isApproved } = useAuth();
+  const { loading, validauthtoken, isAdmin } = useAuth();
 
   // const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
