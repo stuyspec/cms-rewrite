@@ -43,6 +43,7 @@ function Create_Draft() {
     let text: string = String(html);
     text = text.replace(new RegExp("<p></p>", "g"), ""); // remove breaks between paragraphs
     text = text.replace(new RegExp("\n", "g"), ""); // remove line breaks in the html
+    text = text.replace(/(<p[^>]*>)\s+/g, "$1&#9;"); // replace indents
     const summary: string = (document.getElementById("new_summary") as any)
       .value;
     const section_id: number = (document.getElementById("new_section") as any)
@@ -100,9 +101,9 @@ function Create_Draft() {
       <div id="new_draft_fom">
         <h2>
           Volume:&nbsp;
-          <input type="number" id="new_volume" />
+          <input type="number" id="new_volume" min={1}/>
           &nbsp;|&nbsp; Issue:&nbsp;
-          <input type="number" id="new_issue" />
+          <input type="number" id="new_issue" min={1}/>
         </h2>
         <h2>
           Draft title:&nbsp;
