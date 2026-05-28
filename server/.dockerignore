@@ -1,3 +1,4 @@
 # .dockerignore file
 .DS_Store
 node_modules
+.env

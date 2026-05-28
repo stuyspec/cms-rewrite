@@ -18,6 +18,19 @@ interface CreateDraftResponse {
   description: string;
 }
 
+function downloadDraft(content:string, filename:string, contentType:string) {
+  const blob = new Blob([content], {type: contentType});
+  const url = URL.createObjectURL(blob);
+  const secretlink:HTMLAnchorElement = document.createElement("a");
+  secretlink.href = url;
+  secretlink.download = filename;
+
+  document.body.appendChild(secretlink);
+  secretlink.click();
+  document.body.removeChild(secretlink);
+  URL.revokeObjectURL(url);
+}
+
 function Create_Draft() {
   const { loading, validauthtoken, isApproved } = useAuth();
 
@@ -177,6 +190,50 @@ function Create_Draft() {
           <Editor setHTML={setHTML} />
         </div>
         <input onClick={new_draft_handler} type="submit"></input>
+        <button onClick={() => {
+          const temparticledict = {
+            volume: (document.getElementById("new_volume") as any).value,
+            issue: (document.getElementById("new_issue") as any).value,
+            title: (document.getElementById("new_title") as any).value,
+            contributors: selectedContributors,
+            cover_image: (document.getElementById("upload_cover_image") as any).files[0],
+            image_contributors: selectedImageContributors,
+            summary: (document.getElementById("new_summary") as any).value,
+            section_id: (document.getElementById("new_section") as any).value,
+            sub_section: subSection,
+            text: html,
+          }
+          downloadDraft(JSON.stringify(temparticledict), `${(document.getElementById("new_title") as any).value}.cms`, "text/plain")
+        }}>Download Draft</button>
+        <input
+            type="file"
+            accept="text/cms"
+            id="upload_local_article"
+            name="local_article"
+            onChange={()=>{
+              const uploadedarticle = (
+                document.getElementById("upload_local_article") as any
+              ).files[0]
+              const reader = new FileReader();
+              reader.onload = () => {
+                const parsed = JSON.parse(reader.result as string);
+                (document.getElementById("new_volume") as any).value = parsed.volume;
+                (document.getElementById("new_issue") as any).value = parsed.issue;
+                (document.getElementById("new_title") as any).value = parsed.title;
+                setSelectedContributors(parsed.contributors);
+                setSelectedImageContributors(parsed.image_contributors);
+                (document.getElementById("new_summary") as any).value = parsed.summary;
+                (document.getElementById("new_section") as any).value = parsed.section_id;
+                setSubSection(parsed.sub_section);
+                setHTML(parsed.text); //this is broken
+              };
+              reader.onerror = () => {
+                alert("Error reading the file. Please try again.");
+              };
+              reader.readAsText(uploadedarticle);
+              (document.getElementById("upload_local_article") as any).files = null
+            }}
+          />
       </div>
     </div>
   );
