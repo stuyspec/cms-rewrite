@@ -31,6 +31,10 @@ function downloadDraft(content:string, filename:string, contentType:string) {
   URL.revokeObjectURL(url);
 }
 
+async function copytoclipboard(text: string): Promise<void> {
+  await navigator.clipboard.writeText(text);
+}
+
 function Create_Draft() {
   const { loading, validauthtoken, isApproved } = useAuth();
 
@@ -206,34 +210,45 @@ function Create_Draft() {
           downloadDraft(JSON.stringify(temparticledict), `${(document.getElementById("new_title") as any).value}.cms`, "text/plain")
         }}>Download Draft</button>
         <input
-            type="file"
-            accept="text/cms"
-            id="upload_local_article"
-            name="local_article"
-            onChange={()=>{
-              const uploadedarticle = (
-                document.getElementById("upload_local_article") as any
-              ).files[0]
-              const reader = new FileReader();
-              reader.onload = () => {
-                const parsed = JSON.parse(reader.result as string);
-                (document.getElementById("new_volume") as any).value = parsed.volume;
-                (document.getElementById("new_issue") as any).value = parsed.issue;
-                (document.getElementById("new_title") as any).value = parsed.title;
-                setSelectedContributors(parsed.contributors);
-                setSelectedImageContributors(parsed.image_contributors);
-                (document.getElementById("new_summary") as any).value = parsed.summary;
-                (document.getElementById("new_section") as any).value = parsed.section_id;
-                setSubSection(parsed.sub_section);
-                setHTML(parsed.text); //this is broken
-              };
-              reader.onerror = () => {
-                alert("Error reading the file. Please try again.");
-              };
-              reader.readAsText(uploadedarticle);
-              (document.getElementById("upload_local_article") as any).files = null
-            }}
-          />
+          type="file"
+          accept="text/cms"
+          id="upload_local_article"
+          name="local_article"
+          onChange={()=>{
+            const uploadedarticle = (
+              document.getElementById("upload_local_article") as any
+            ).files[0]
+            const reader = new FileReader();
+            reader.onload = () => {
+              const parsed = JSON.parse(reader.result as string);
+              (document.getElementById("new_volume") as any).value = parsed.volume;
+              (document.getElementById("new_issue") as any).value = parsed.issue;
+              (document.getElementById("new_title") as any).value = parsed.title;
+              setSelectedContributors(parsed.contributors);
+              setSelectedImageContributors(parsed.image_contributors);
+              (document.getElementById("new_summary") as any).value = parsed.summary;
+              (document.getElementById("new_section") as any).value = parsed.section_id;
+              setSubSection(parsed.sub_section);
+              setHTML(parsed.text);
+              const result = parsed.text
+                .replace(/<\/p>\s*<p[^>]*>/gi, "\n")
+                .replace(/<br\s*\/?>/gi, "")
+                .replace(/<\/?(p|span)[^>]*>/gi, "");
+              copytoclipboard(result);
+              const tbox = (document.getElementsByClassName("editor-root")[0] as any)
+              tbox.focus();
+              tbox.select();
+              // the person filling it in just needs to paste now (there must be a better way but idk how to use the lexical editor)
+              // TODO: make it so that you don't need to paste the article text
+            };
+            reader.onerror = () => {
+              alert("Error reading the file. Please try again.");
+            };
+            reader.readAsText(uploadedarticle);
+            (document.getElementById("upload_local_article") as any).files = null
+          }}
+        />
+        <h3>after you upload your local article just do control+v in the editor text box ty</h3>
       </div>
     </div>
   );

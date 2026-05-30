@@ -133,9 +133,9 @@ export default function EditProd() {
             "features",
             "opinions",
             "science",
-            "ae",
             "humor",
             "sports",
+            "ae",
             "media",
             "spec-plus",
           ]
