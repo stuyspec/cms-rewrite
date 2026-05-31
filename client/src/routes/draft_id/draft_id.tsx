@@ -47,13 +47,13 @@ function EditDraftPage() {
 		setSelectedContributors(rjson.drafts[0].contributors);
 		setSelectedImageContributors(
 			rjson.drafts[0].cover_image_contributor
-				? [rjson.drafts[0].cover_image_contributor]
+				? rjson.drafts[0].cover_image_contributor
 				: []
 		);
 		setSubSection(rjson.drafts[0].sub_section || "");
 	};
 
-	const submitEdit = async () => {
+	const submitEdit = async (willPublish:boolean) => {
 		console.log("Submit edit");
 		const volume = (document.getElementById("edit_volume") as any)?.value;
 		const issue = (document.getElementById("edit_issue") as any)?.value;
@@ -61,10 +61,10 @@ function EditDraftPage() {
 		const contributors: string[] = selectedContributors.map(
 			(c: any) => c._id
 		);
-		const cover_image_contributor: string = selectedImageContributors.map(
-			(c: any) => c._id
-		)[0];
-
+		let cover_image_contributor: string[] | string = selectedImageContributors.map( //this is for when i inevitably rewrite the actual stuyspec.com: remember to make the 
+			(c: any) => c._id															//cover image contributor only take the first item for the cover image credit thanks
+		)																				//nvm i think i addressed this in the backend (db.js) but just be aware yk
+		
 		const section_id = (document.getElementById("edit_section") as any)
 			?.value;
 		const summary = (document.getElementById("edit_summary") as any)?.value;
@@ -74,18 +74,24 @@ function EditDraftPage() {
 			issue,
 			title,
 			contributors: contributors,
-			text: html,
 			section_id,
 			summary,
 		};
+
+		let text = html;
+		if (willPublish) {
+			text = text.replace(new RegExp(/\(insert image here\)/,"g"), "<div class=\"content_img\"></div>");
+		}
+		send.text = text
+
 		if (subSection) {
 			send.sub_section = subSection;
 		}
 		const cover_image_to_use = coverImageURL
 			? coverImageURL
 			: draft?.cover_image;
-		if (cover_image_to_use && cover_image_contributor) {
-			send.cover_image = cover_image_to_use;
+		if (cover_image_to_use && cover_image_contributor) { //this cover image doesn't need to be changed because it's ONLY cover image, not any of the others, not like 
+			send.cover_image = cover_image_to_use;			 //when you're creating the draft
 			send.cover_image_contributor = cover_image_contributor;
 		}
 
@@ -105,7 +111,7 @@ function EditDraftPage() {
 	}
 
 	const submitEditHandler = async () => {
-		const rjson = await submitEdit();
+		const rjson = await submitEdit(false);
 
 		if (rjson.success) {
 			console.log("Suceess! Reloading.");
@@ -138,7 +144,7 @@ function EditDraftPage() {
 	const publishDraft = async () => {
 		console.log("Publish Draft");
 
-		const rjson_edit = await submitEdit();
+		const rjson_edit = await submitEdit(true);
 		if (!rjson_edit.success) {
 			setError("Editing was unsuccessful before publishing.");
 			return;
@@ -223,7 +229,7 @@ function EditDraftPage() {
 								setSelectedImageContributors
 							}
 							title="Image Contributors:"
-							max_contributors={1}
+							duplicates_allowed={true}
 						></ContributorPopUp>
 						{/* <textarea id="text" defaultValue={draft.text} /> */}
 						<h3>

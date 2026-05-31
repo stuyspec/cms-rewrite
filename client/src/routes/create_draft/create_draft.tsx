@@ -39,11 +39,11 @@ function Create_Draft() {
   const { loading, validauthtoken, isApproved } = useAuth();
 
   // const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
+  const [coverImageURL, setCoverImageURL] = useState<string[] | null>(null);
   const [selectedContributors, setSelectedContributors] = useState<any>([]);
   const [selectedImageContributors, setSelectedImageContributors] =
     useState<any>([]);
-  const [html, setHTML] = useState("");
+  const [html, setHTML] = useState<string>("");
   const [subSection, setSubSection] = useState<string>("");
 
   const new_draft_handler = async () => {
@@ -53,9 +53,9 @@ function Create_Draft() {
     const issue: string = (document.getElementById("new_issue") as any).value;
     const title: string = (document.getElementById("new_title") as any).value;
     const contributors: string[] = selectedContributors.map((c: any) => c._id);
-    const cover_image_contributor: string = selectedImageContributors.map(
+    const cover_image_contributors: string[] = selectedImageContributors.map(
       (c: any) => c._id,
-    )[0];
+    );
 
     let text: string = String(html);
     text = text.replace(new RegExp("<p></p>", "g"), ""); // remove breaks between paragraphs
@@ -74,9 +74,10 @@ function Create_Draft() {
       section_id: section_id,
       summary: summary,
     };
-    if (coverImageURL && cover_image_contributor) {
-      body.cover_image = coverImageURL;
-      body.cover_image_contributor = cover_image_contributor;
+    if (coverImageURL && cover_image_contributors) {
+      body.cover_image = coverImageURL[0];
+      body.cover_image_contributor = cover_image_contributors;
+      body.other_images = coverImageURL.slice(1);
     }
 
     if (subSection) {
@@ -102,12 +103,16 @@ function Create_Draft() {
       document.getElementById("upload_cover_image") as any
     ).files;
     if (uploaded_files.length > 0) {
-      const uploaded_file = uploaded_files[0]; // always grab first
-      const public_url = (await upload_image_helper(
-        uploaded_file,
-        validauthtoken,
-      )) as string;
-      setCoverImageURL(public_url);
+      let images = []
+      for (let i = 0; i < uploaded_files.length; i++) {
+        const uploaded_file = uploaded_files[i];
+        const public_url = (await upload_image_helper(
+          uploaded_file,
+          validauthtoken,
+        )) as string;
+        images.push(public_url);
+      }
+      setCoverImageURL(images);
     }
   };
 
@@ -133,20 +138,29 @@ function Create_Draft() {
         ></ContributorPopUp>
 
         <div>
+          <h2>Images: first one is the cover image</h2>
           <input
             type="file"
             accept="image/png, image/jpg, image/jpeg"
             id="upload_cover_image"
             name="cover_image"
+            multiple
             onChange={upload_cover_image}
           />
         </div>
-        {coverImageURL ? <img id="cover_image" src={coverImageURL} /> : <></>}
+        {coverImageURL ? 
+        <ul>
+          {coverImageURL.map((thingy) => {
+            return (<li key={thingy}><img id={`image${thingy}`} src={thingy} /></li>);
+          })}
+        </ul>
+           : <></>
+        }
         <ContributorPopUp
           selectedContributors={selectedImageContributors}
           setSelectedContributors={setSelectedImageContributors}
-          title="Image Contributors:"
-          max_contributors={1}
+          title="Image Contributors, place in order of the images: "
+          duplicates_allowed={true}
         ></ContributorPopUp>
         <h3>
           Summary: &nbsp;
@@ -189,7 +203,7 @@ function Create_Draft() {
               })}
           </select>
         </h3>
-        <h3>The article text:</h3>
+        <h3>The article text (to place in-text images, just put "(insert image here)" as a placeholder for where you want the image to be. Images are added in order you selected them.):</h3>
         <div className="formattedEditor">
           <Editor setHTML={setHTML} />
         </div>
@@ -200,7 +214,7 @@ function Create_Draft() {
             issue: (document.getElementById("new_issue") as any).value,
             title: (document.getElementById("new_title") as any).value,
             contributors: selectedContributors,
-            cover_image: (document.getElementById("upload_cover_image") as any).files[0],
+            cover_image: coverImageURL,
             image_contributors: selectedImageContributors,
             summary: (document.getElementById("new_summary") as any).value,
             section_id: (document.getElementById("new_section") as any).value,
@@ -224,6 +238,7 @@ function Create_Draft() {
               (document.getElementById("new_volume") as any).value = parsed.volume;
               (document.getElementById("new_issue") as any).value = parsed.issue;
               (document.getElementById("new_title") as any).value = parsed.title;
+              setCoverImageURL(parsed.cover_image);
               setSelectedContributors(parsed.contributors);
               setSelectedImageContributors(parsed.image_contributors);
               (document.getElementById("new_summary") as any).value = parsed.summary;
