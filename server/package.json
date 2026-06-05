@@ -9,6 +9,7 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"18": "^0.0.0",
 		"aws-sdk": "^2.1258.0",
 		"bcryptjs": "^2.4.3",
 		"cors": "^2.8.5",
@@ -20,6 +21,7 @@
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^6.7.2",
 		"morgan": "^1.10.0",
+		"node": "^24.16.0",
 		"node-fetch": "^3.3.0",
 		"sharp": "^0.31.2",
 		"uuid": "^9.0.0"
@@ -27,6 +29,6 @@
 	"keywords": [],
 	"description": "",
 	"devDependencies": {
-		"nodemon": "^2.0.15"
+		"nodemon": "^2.0.22"
 	}
 }
