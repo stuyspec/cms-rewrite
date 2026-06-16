@@ -47,9 +47,25 @@ router.post("/publish_article", isAdminMiddleware, async (req, res, next) => {
     delete draft_data.__v;
 
     draft_data.is_published = true;
+    let old = draft_data.cover_image_contributor //this is for when i add the article extras and i need the other contrib info but i don't wanna overwrite it
+    draft_data.cover_image_contributor = draft_data.cover_image_contributor[0];
 
     const articlewriter = await Article.create(draft_data);
     const saved_article = await articlewriter.save();
+
+    if (draft_data.other_images.length > 0) {
+      for (const [index, element] of draft_data.other_images.entries()) {
+        await ArticleExtra.create({
+          _id: new mongoose.Types.ObjectId(),
+          article: saved_article._id,
+          contributors: [old[index + 1]],
+          type: "image",
+          index: index,
+          image_src: element,
+          __v: 0
+        });
+      }
+    }
 
     await Draft.deleteOne({ _id: draft_id });
 
