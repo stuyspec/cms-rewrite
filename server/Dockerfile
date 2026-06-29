@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:22
 
 # libc is needed for deps
 # RUN apk add --no-cache libc6-compat vips-dev fftw-dev gcc g++ make 

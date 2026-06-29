@@ -367,7 +367,9 @@ router.post("/upload_media", async (req, res, next) => {
       };
 
       // Uploading files to the bucket
-      const upData = await s3.upload(params).promise();
+      const upData = await // The `.promise()` call might be on an JS SDK v2 client API.
+      // If yes, please remove .promise(). If not, remove this comment.
+      s3.upload(params).promise();
 
       res.json({ success: true, public_url: upData.Location });
     }

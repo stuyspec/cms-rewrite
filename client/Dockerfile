@@ -1,6 +1,6 @@
 # Double-container Dockerfile for separated build process.
 
-FROM node:18-alpine AS deps
+FROM node:22-alpine AS deps
 
 # libc is needed for deps
 RUN apk add --no-cache libc6-compat
@@ -13,7 +13,7 @@ RUN npm ci
 # END DEPS IMAGE
 
 # container to handle our Build
-FROM node:18-alpine AS BUILD_IMAGE
+FROM node:22-alpine AS build_image
 
 # Set up our work directory again
 WORKDIR /app
@@ -21,7 +21,7 @@ WORKDIR /app
 # Bring over installed deps and source code
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-COPY .env .
+#COPY .env .
 
 RUN npm run build
 
@@ -29,9 +29,9 @@ RUN npm run build
 # END OF BUILD_IMAGE
 
 # This starts our application's run image - the final output of build.
-FROM node:18-alpine
+FROM node:22-alpine
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S react -u 1001
@@ -47,7 +47,7 @@ COPY --from=BUILD_IMAGE --chown=react:nodejs /app/public ./public
 COPY --from=BUILD_IMAGE --chown=react:nodejs /app/dist ./dist
 
 # 5. the .env.local
-COPY --from=BUILD_IMAGE --chown=react:nodejs /app/.env  ./
+#COPY --from=BUILD_IMAGE --chown=react:nodejs /app/.env  ./
 
 USER react
 

@@ -36,12 +36,17 @@ router.post("/register", async (req, res, next) => {
 		let savedUser = await user.save();
 
 		// create and assaign a jwt
-		console.log(process.env.ACCESS_TOKEN_SECRET);
+		//console.log(process.env.ACCESS_TOKEN_SECRET);
+
+		//! JWT EXPIRES IN 3 HOUR OF CREATION
 		const token = jwt.sign(
 			{
 				_id: savedUser._id,
 			},
-			process.env.ACCESS_TOKEN_SECRET
+			process.env.ACCESS_TOKEN_SECRET,
+			{
+				expiresIn: '3h',
+			}
 		);
 		res.header("auth-token", token).send({
 			token: token,
@@ -83,11 +88,16 @@ router.post("/login", async (req, res, next) => {
 		}
 
 		// create and assaign a jwt
+
+		//! JWT EXPIRES IN 3 HOUR OF CREATION
 		const token = jwt.sign(
 			{
 				_id: user._id,
 			},
-			process.env.ACCESS_TOKEN_SECRET
+			process.env.ACCESS_TOKEN_SECRET,
+			{
+				expiresIn: '3h',
+			}
 		);
 		res.header("auth-token", token).json({
 			token: token,
