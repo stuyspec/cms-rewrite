@@ -11,6 +11,7 @@ const s3 = require("../../aws");
 const mongoose = require("mongoose"); // only used for bson id generation, other mongoose setup is in index.js
 
 const uuidv1 = require("uuid").v1;
+const { Upload } = require("@aws-sdk/lib-storage");
 
 router.use(verifyTokenMiddlware);
 // Base route
@@ -367,9 +368,11 @@ router.post("/upload_media", async (req, res, next) => {
       };
 
       // Uploading files to the bucket
-      const upData = await // The `.promise()` call might be on an JS SDK v2 client API.
-      // If yes, please remove .promise(). If not, remove this comment.
-      s3.upload(params).promise();
+      const pu3 = new Upload({
+        client: s3,
+        params: params
+      })
+      const upData = await pu3.done();
 
       res.json({ success: true, public_url: upData.Location });
     }
