@@ -21,7 +21,7 @@ WORKDIR /app
 # Bring over installed deps and source code
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-#COPY .env .
+COPY .env .
 
 RUN npm run build
 
@@ -41,13 +41,13 @@ RUN adduser -S react -u 1001
 # 2. the Next build output and static files
 # 3. the node_modules.
 WORKDIR /app
-COPY --from=BUILD_IMAGE --chown=react:nodejs /app/package*.json ./
-COPY --from=BUILD_IMAGE --chown=react:nodejs /app/node_modules ./node_modules
-COPY --from=BUILD_IMAGE --chown=react:nodejs /app/public ./public
-COPY --from=BUILD_IMAGE --chown=react:nodejs /app/dist ./dist
+COPY --from=build_image --chown=react:nodejs /app/package*.json ./
+COPY --from=build_image --chown=react:nodejs /app/node_modules ./node_modules
+COPY --from=build_image --chown=react:nodejs /app/public ./public
+COPY --from=build_image --chown=react:nodejs /app/dist ./dist
 
 # 5. the .env.local
-#COPY --from=BUILD_IMAGE --chown=react:nodejs /app/.env  ./
+COPY --from=build_image --chown=react:nodejs /app/.env  ./
 
 USER react
 
