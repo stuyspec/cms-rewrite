@@ -114,6 +114,7 @@ router.post("/login", async (req, res, next) => {
 router.get("/verify/:id", async (req, res, next) => {
 	try {
 		let token = req.params.id;
+		console.log(process.env.ACCESS_TOKEN_SECRET);
 		const verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 		console.log(verified);
 		const uid = verified._id;
