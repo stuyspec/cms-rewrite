@@ -1,0 +1,20 @@
+services:
+  cmsfrontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:3001:4173"
+    depends_on:
+      - cmsbackend
+  cmsbackend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    env_file:
+      - ./server/.env
+    ports: 
+      - "127.0.0.1:5678:5678"
+    
+    
+    

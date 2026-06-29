@@ -21,7 +21,7 @@ WORKDIR /app
 # Bring over installed deps and source code
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-COPY .env .
+# COPY .env .
 
 RUN npm run build
 
@@ -47,7 +47,7 @@ COPY --from=build_image --chown=react:nodejs /app/public ./public
 COPY --from=build_image --chown=react:nodejs /app/dist ./dist
 
 # 5. the .env.local
-COPY --from=build_image --chown=react:nodejs /app/.env  ./
+# COPY --from=build_image --chown=react:nodejs /app/.env  ./
 
 USER react
 
