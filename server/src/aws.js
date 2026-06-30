@@ -11,6 +11,7 @@ const s3 = new S3({
 		accessKeyId: ID,
 		secretAccessKey: SECRET,
 	},
+	region: "us-east-2",
 });
 
 module.exports = s3;
