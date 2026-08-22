@@ -52,6 +52,10 @@ const articleSchema = new mongoose.Schema({
 	},
 	rank: {
 		type: Number
+	},
+	type: {
+		required: true,
+		type: String,
 	}
 });
 

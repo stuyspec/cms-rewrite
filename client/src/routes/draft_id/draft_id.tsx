@@ -61,13 +61,14 @@ function EditDraftPage() {
 		const contributors: string[] = selectedContributors.map(
 			(c: any) => c._id
 		);
-		let cover_image_contributor: string[] | string = selectedImageContributors.map( //this is for when i inevitably rewrite the actual stuyspec.com: remember to make the 
-			(c: any) => c._id															//cover image contributor only take the first item for the cover image credit thanks
-		)																				//nvm i think i addressed this in the backend (db.js) but just be aware yk
-		
+		let cover_image_contributor: string[] | string = selectedImageContributors.map(
+			(c: any) => c._id
+		)
+
 		const section_id = (document.getElementById("edit_section") as any)
 			?.value;
 		const summary = (document.getElementById("edit_summary") as any)?.value;
+		const article_type = (document.getElementById("article_type") as any)?.value;
 
 		const send: any = {
 			volume,
@@ -76,6 +77,7 @@ function EditDraftPage() {
 			contributors: contributors,
 			section_id,
 			summary,
+			article_type, //make sure this works because i don't know how this function works
 		};
 
 		let text = html;
@@ -90,9 +92,9 @@ function EditDraftPage() {
 		const cover_image_to_use = coverImageURL
 			? coverImageURL
 			: draft?.cover_image;
-		if (cover_image_to_use && cover_image_contributor) { //this cover image doesn't need to be changed because it's ONLY cover image, not any of the others, not like 
-			send.cover_image = cover_image_to_use;			 //when you're creating the draft
-			send.cover_image_contributor = cover_image_contributor;
+		if (cover_image_to_use && cover_image_contributor) {
+			send.cover_image = cover_image_to_use;
+			send.cover_image_contributor = cover_image_contributor; //add other images like in create_draft
 		}
 
 		const rjson = (await safe_fetch(
@@ -202,7 +204,7 @@ function EditDraftPage() {
 							setSelectedContributors={setSelectedContributors}
 							title="Article Contributors:"
 						></ContributorPopUp>
-						<img
+						<img //replace with map or wtv
 							id="cover_image"
 							src={
 								coverImageURL
@@ -216,6 +218,7 @@ function EditDraftPage() {
 								accept="image/png, image/jpg, image/jpeg"
 								id="upload_cover_image"
 								onChange={upload_cover_image}
+								multiple
 							/>
 						</div>
 
@@ -232,6 +235,10 @@ function EditDraftPage() {
 							duplicates_allowed={true}
 						></ContributorPopUp>
 						{/* <textarea id="text" defaultValue={draft.text} /> */}
+						<h3>
+		          ArticleType: &nbsp;
+		          <textarea id="article_type" rows={5} cols={33} />
+						</h3>
 						<h3>
 							Summary: &nbsp;
 							<textarea

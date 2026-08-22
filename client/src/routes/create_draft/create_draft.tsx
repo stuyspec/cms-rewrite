@@ -64,15 +64,18 @@ function Create_Draft() {
       .value;
     const section_id: number = (document.getElementById("new_section") as any)
       .value;
+    const arttype: string = (document.getElementById("article_type") as any)
+      .value;
 
-    const body: any = {
+		const body: any = {
       title: title,
       contributors: contributors,
       text: text,
       volume: volume,
       issue: issue,
       section_id: section_id,
-      summary: summary,
+			summary: summary,
+			type: arttype,
     };
     if (coverImageURL && cover_image_contributors) {
       body.cover_image = coverImageURL[0];
@@ -148,7 +151,7 @@ function Create_Draft() {
             onChange={upload_cover_image}
           />
         </div>
-        {coverImageURL ? 
+        {coverImageURL ?
         <ul>
           {coverImageURL.map((thingy) => {
             return (<li key={thingy}><img id={`image${thingy}`} src={thingy} /></li>);
@@ -161,7 +164,11 @@ function Create_Draft() {
           setSelectedContributors={setSelectedImageContributors}
           title="Image Contributors, place in order of the images: "
           duplicates_allowed={true}
-        ></ContributorPopUp>
+				></ContributorPopUp>
+				<h3>
+          ArticleType: &nbsp;
+          <textarea id="article_type" rows={5} cols={33} />
+				</h3>
         <h3>
           Summary: &nbsp;
           <textarea id="new_summary" rows={5} cols={33} />
