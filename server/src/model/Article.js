@@ -53,7 +53,7 @@ const articleSchema = new mongoose.Schema({
 	rank: {
 		type: Number
 	},
-	type: {
+	arttype: {
 		required: true,
 		type: String,
 	}

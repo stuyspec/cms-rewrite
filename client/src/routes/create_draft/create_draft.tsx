@@ -75,7 +75,7 @@ function Create_Draft() {
       issue: issue,
       section_id: section_id,
 			summary: summary,
-			type: arttype,
+			arttype: arttype,
     };
     if (coverImageURL && cover_image_contributors) {
       body.cover_image = coverImageURL[0];

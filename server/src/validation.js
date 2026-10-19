@@ -39,6 +39,7 @@ const draftValidation = (data) => {
 		cover_image_contributor: Joi.array().items(Joi.string()).optional(),
 		other_images: Joi.array().items(Joi.string().uri()).optional(),
 		sub_section: Joi.string().max(32).optional(),
+		arttype: Joi.string().required(),
 	});
 
 	//validate data

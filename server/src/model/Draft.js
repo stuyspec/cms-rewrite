@@ -53,7 +53,7 @@ const draftSchema = new mongoose.Schema({
 	sub_section: {
 		type: String,
 	},
-	type: {
+	arttype: {
 		required: true,
 		type: String,
 	}

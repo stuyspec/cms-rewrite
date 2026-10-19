@@ -68,7 +68,7 @@ function EditDraftPage() {
 		const section_id = (document.getElementById("edit_section") as any)
 			?.value;
 		const summary = (document.getElementById("edit_summary") as any)?.value;
-		const article_type = (document.getElementById("article_type") as any)?.value;
+		const arttype = (document.getElementById("article_type") as any)?.value;
 
 		const send: any = {
 			volume,
@@ -77,7 +77,7 @@ function EditDraftPage() {
 			contributors: contributors,
 			section_id,
 			summary,
-			article_type, //make sure this works because i don't know how this function works
+			arttype, //make sure this works because i don't know how this function works
 		};
 
 		let text = html;
@@ -237,7 +237,10 @@ function EditDraftPage() {
 						{/* <textarea id="text" defaultValue={draft.text} /> */}
 						<h3>
 		          ArticleType: &nbsp;
-		          <textarea id="article_type" rows={5} cols={33} />
+							<textarea
+								defaultValue={draft.arttype}
+								id="article_type"
+								rows={5} cols={33} />
 						</h3>
 						<h3>
 							Summary: &nbsp;
