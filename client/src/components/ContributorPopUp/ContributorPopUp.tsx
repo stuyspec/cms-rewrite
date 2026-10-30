@@ -11,6 +11,7 @@ function ContributorPopUp({
 	setSelectedContributors,
 	title,
 	max_contributors,
+	duplicates_allowed,
 }: any) {
 	const { loading, validauthtoken, isAdmin } = useAuth();
 	const [matchedContributors, setMatchedContributors] = useState<any>([]);
@@ -46,7 +47,7 @@ function ContributorPopUp({
 			(selectedContributor: any) =>
 				selectedContributor._id == selected._id
 		);
-		if (!doesExist) {
+		if (!doesExist || duplicates_allowed) {
 			// Short circuit if max contributors is a falsy value and set the contributor anyway
 			// or, check if adding contributors is under the max
 			if (
@@ -68,11 +69,9 @@ function ContributorPopUp({
 	};
 
 	const unselect_contributor = async (contributor_index: number) => {
-		const selected: any = selectedContributors[contributor_index];
-
 		const newselectedcontributors = selectedContributors.filter(
-			(selectedContributor: any) =>
-				selectedContributor._id != selected._id
+			(selectedContributor: any, i: number) =>
+				i != contributor_index
 		);
 
 		setSelectedContributors(newselectedcontributors);

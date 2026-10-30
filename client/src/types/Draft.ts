@@ -15,4 +15,5 @@ export default interface Draft {
 	cover_image_contributor: Staff[];
 	cover_image_source: string;
 	sub_section: string | undefined;
+	arttype: string;
 }

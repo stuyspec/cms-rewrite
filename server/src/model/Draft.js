@@ -40,8 +40,11 @@ const draftSchema = new mongoose.Schema({
 		type: String,
 	},
 	cover_image_contributor: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: [mongoose.Schema.Types.ObjectId], //please dont break
 		ref: StaffModel.modelName,
+	},
+	other_images: {
+		type: [String],
 	},
 	drafter_id: {
 		required: true,
@@ -50,6 +53,10 @@ const draftSchema = new mongoose.Schema({
 	sub_section: {
 		type: String,
 	},
+	arttype: {
+		required: true,
+		type: String,
+	}
 });
 
 const draftModelfordb = mongoose.model("Draft", draftSchema);

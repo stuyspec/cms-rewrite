@@ -153,8 +153,7 @@ function Home() {
 						</div>
 					) : (
 						<h1>
-							YOU NEED TO REQUEST ACCOUNT VERIFICATION FROM A STUY
-							SPEC ADMIN
+							YOU NEED TO REQUEST ACCOUNT VERIFICATION FROM A STUY SPEC ADMIN
 						</h1>
 					)}
 				</div>
