@@ -31,42 +31,35 @@ function EditDraftPage() {
 	const [subSection, setSubSection] = useState<string>("");
 
 	const fetchDraft = async () => {
-		const rjson = (await safe_fetch(
-			window.BASE_URL + "/api/db/get_drafts",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"auth-token": validauthtoken,
-				},
-				body: JSON.stringify({ _id: draft_id }),
-			}
-		)) as DraftsResponse;
+		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/get_drafts", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"auth-token": validauthtoken,
+			},
+			body: JSON.stringify({ _id: draft_id }),
+		})) as DraftsResponse;
 
 		setDraft(rjson.drafts[0]);
 		setSelectedContributors(rjson.drafts[0].contributors);
 		setSelectedImageContributors(
 			rjson.drafts[0].cover_image_contributor
 				? rjson.drafts[0].cover_image_contributor
-				: []
+				: [],
 		);
 		setSubSection(rjson.drafts[0].sub_section || "");
 	};
 
-	const submitEdit = async (willPublish:boolean) => {
+	const submitEdit = async (willPublish: boolean) => {
 		console.log("Submit edit");
 		const volume = (document.getElementById("edit_volume") as any)?.value;
 		const issue = (document.getElementById("edit_issue") as any)?.value;
 		const title = (document.getElementById("edit_title") as any)?.value;
-		const contributors: string[] = selectedContributors.map(
-			(c: any) => c._id
-		);
-		let cover_image_contributor: string[] | string = selectedImageContributors.map(
-			(c: any) => c._id
-		)
+		const contributors: string[] = selectedContributors.map((c: any) => c._id);
+		let cover_image_contributor: string[] | string =
+			selectedImageContributors.map((c: any) => c._id);
 
-		const section_id = (document.getElementById("edit_section") as any)
-			?.value;
+		const section_id = (document.getElementById("edit_section") as any)?.value;
 		const summary = (document.getElementById("edit_summary") as any)?.value;
 		const arttype = (document.getElementById("article_type") as any)?.value;
 
@@ -82,9 +75,12 @@ function EditDraftPage() {
 
 		let text = html;
 		if (willPublish) {
-			text = text.replace(new RegExp(/\(insert image here\)/,"g"), "<div class=\"content_img\"></div>");
+			text = text.replace(
+				new RegExp(/\(insert image here\)/, "g"),
+				'<div class="content_img"></div>',
+			);
 		}
-		send.text = text
+		send.text = text;
 
 		if (subSection) {
 			send.sub_section = subSection;
@@ -97,27 +93,24 @@ function EditDraftPage() {
 			send.cover_image_contributor = cover_image_contributor; //add other images like in create_draft
 		}
 
-		const rjson = (await safe_fetch(
-			window.BASE_URL + "/api/db/update_draft",
-			{
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-					"auth-token": validauthtoken,
-				},
-				body: JSON.stringify({ draft_id: draft?._id, update: send }),
-			}
-		)) as { success: boolean };
+		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/update_draft", {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				"auth-token": validauthtoken,
+			},
+			body: JSON.stringify({ draft_id: draft?._id, update: send }),
+		})) as { success: boolean };
 
 		return rjson;
-	}
+	};
 
 	const submitEditHandler = async () => {
 		const rjson = await submitEdit(false);
 
 		if (rjson.success) {
 			console.log("Suceess! Reloading.");
-			navigate(0)
+			navigate(0);
 		}
 	};
 
@@ -136,7 +129,8 @@ function EditDraftPage() {
 		if (uploaded_files.length > 0) {
 			const uploaded_file = uploaded_files[0]; // always grab first
 			const public_url = (await upload_image_helper(
-				uploaded_file, validauthtoken
+				uploaded_file,
+				validauthtoken,
 			)) as string;
 			console.log(public_url);
 			setCoverImageURL(public_url);
@@ -161,7 +155,7 @@ function EditDraftPage() {
 					"auth-token": validauthtoken,
 				},
 				body: JSON.stringify({ draft_id: draft?._id }),
-			}
+			},
 		);
 
 		if (rjson.article) {
@@ -184,19 +178,11 @@ function EditDraftPage() {
 								defaultValue={draft.volume}
 							/>
 							&nbsp;|&nbsp; Issue:&nbsp;
-							<input
-								type="number"
-								id="edit_issue"
-								defaultValue={draft.issue}
-							/>
+							<input type="number" id="edit_issue" defaultValue={draft.issue} />
 						</h2>
 						<h2>
 							Draft title:&nbsp;
-							<input
-								type="text"
-								id="edit_title"
-								defaultValue={draft.title}
-							/>
+							<input type="text" id="edit_title" defaultValue={draft.title} />
 						</h2>
 
 						<ContributorPopUp
@@ -206,11 +192,7 @@ function EditDraftPage() {
 						></ContributorPopUp>
 						<img //replace with map or wtv
 							id="cover_image"
-							src={
-								coverImageURL
-									? coverImageURL
-									: draft.cover_image
-							}
+							src={coverImageURL ? coverImageURL : draft.cover_image}
 						/>
 						<div>
 							<input
@@ -228,70 +210,66 @@ function EditDraftPage() {
 									? selectedImageContributors
 									: []
 							}
-							setSelectedContributors={
-								setSelectedImageContributors
-							}
+							setSelectedContributors={setSelectedImageContributors}
 							title="Image Contributors:"
 							duplicates_allowed={true}
 						></ContributorPopUp>
 						{/* <textarea id="text" defaultValue={draft.text} /> */}
 						<h3>
-		          ArticleType: &nbsp;
+							ArticleType: &nbsp;
 							<textarea
 								defaultValue={draft.arttype}
 								id="article_type"
-								rows={5} cols={33} />
+								rows={5}
+								cols={33}
+							/>
 						</h3>
 						<h3>
 							Summary: &nbsp;
 							<textarea
 								defaultValue={draft.summary}
 								id="edit_summary"
-								rows={5} cols={33}
+								rows={5}
+								cols={33}
 							/>
 						</h3>
 						<h3>
 							Section:&nbsp;
-							<select
-								id="edit_section"
-								defaultValue={draft.section_id}
-							>
+							<select id="edit_section" defaultValue={draft.section_id}>
 								<option value="0">News</option>
 								<option value="1">Features</option>
 								<option value="2">Opinions</option>
 								<option value="3">Science</option>
-								<option value="6">
-									Arts and Entertainment
-								</option>
+								<option value="6">Arts and Entertainment</option>
 								<option value="4">Humor</option>
 								<option value="5">Sports</option>
-								<option value="7">Media</option>
-								<option value="8">Spec+</option>
+								<option value="7">Games</option>
+								<option value="8">Media</option>
+								<option value="9">Spec+</option>
 							</select>
 						</h3>
 						<h3>
 							sub_section: &nbsp;
 							<select
 								onChange={(e) => {
-								setSubSection(e.target.value);
+									setSubSection(e.target.value);
 								}}
 								value={subSection}
 								defaultValue={draft.sub_section} //please double check this, because it didn't exist in the previous version of subsection, but i added it because i figure it must exist right???
 								//also i couldn't get the server to work to check it myself lol
 							>
 								<option value="" />
-								{
-								subSections.map((v_substr: string[]) => {
+								{subSections.map((v_substr: string[]) => {
 									return (
-									<optgroup label={v_substr[0]}>
-										{v_substr.slice(1).map((otherv_substr: string) => {
-										return (
-											<option key={otherv_substr} value={otherv_substr}>
-											{otherv_substr}
-											</option>
-										)
-										})}
-									</optgroup>
+										<optgroup label={v_substr[0]}>
+											{v_substr.slice(1).map((otherv_substr: string) => {
+												return (
+													<option key={otherv_substr} value={otherv_substr}>
+														{otherv_substr}
+													</option>
+												);
+											})}
+										</optgroup>
 									);
 								})}
 							</select>
