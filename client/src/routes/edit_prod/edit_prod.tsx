@@ -10,188 +10,189 @@ import ArticleExtra from "../../types/ArticleExtra";
 import ImageExtras from "../../components/ImageExtras/ImageExtras";
 
 const fetcher = (
-  input: RequestInfo,
-  token: string,
-  slug: string | undefined,
-  ...args: any[]
+	input: RequestInfo,
+	token: string,
+	slug: string | undefined,
+	...args: any[]
 ) => {
-  if (!token) {
-    return Promise.reject("No auth token provided");
-  }
+	if (!token) {
+		return Promise.reject("No auth token provided");
+	}
 
-  const response = safe_fetch(input, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "auth-token": token,
-    },
-    body: JSON.stringify({ slug }),
-  });
+	const response = safe_fetch(input, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"auth-token": token,
+		},
+		body: JSON.stringify({ slug }),
+	});
 
-  return response;
+	return response;
 };
 
 interface ArticlesResponse {
-  article: Article;
-  article_extras: ArticleExtra[];
+	article: Article;
+	article_extras: ArticleExtra[];
 }
 
 export default function EditProd() {
-  const { slug } = useParams();
-  const navigate = useNavigate();
-  const { loading, validauthtoken, isAdmin } = useAuth();
-  const [articleExtras, setArticleExtras] = useState<ArticleExtra[] | null>(
-    null,
-  );
+	const { slug } = useParams();
+	const navigate = useNavigate();
+	const { loading, validauthtoken, isAdmin } = useAuth();
+	const [articleExtras, setArticleExtras] = useState<ArticleExtra[] | null>(
+		null,
+	);
 
-  const { data, error, isLoading } = useSWR<ArticlesResponse>(
-    [window.BASE_URL + "/api/db/get_article", validauthtoken, slug],
-    ([url, token, slug]) => fetcher(url, token as string, slug as string),
-  );
+	const { data, error, isLoading } = useSWR<ArticlesResponse>(
+		[window.BASE_URL + "/api/db/get_article", validauthtoken, slug],
+		([url, token, slug]) => fetcher(url, token as string, slug as string),
+	);
 
-  const [article, setArticle] = useState({} as Article);
+	const [article, setArticle] = useState({} as Article);
 
-  useEffect(() => {
-    if (data) {
-      console.log(data.article);
-      data.article.text = data.article.text.replaceAll("</p><", "</p>\n\n<");
-      setArticle(data.article);
-    }
-  }, [data]);
+	useEffect(() => {
+		if (data) {
+			console.log(data.article);
+			data.article.text = data.article.text.replaceAll("</p><", "</p>\n\n<");
+			setArticle(data.article);
+		}
+	}, [data]);
 
-  const updateArticle = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (article.text == "" && articleExtras == null) {
-      // means no change has occurred from the article text in the db!
-      return;
-    }
+	const updateArticle = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		if (article.text == "" && articleExtras == null) {
+			// means no change has occurred from the article text in the db!
+			return;
+		}
 
-    const rjson = await safe_fetch(window.BASE_URL + "/api/db/update_article", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": validauthtoken,
-      },
-      body: JSON.stringify({
-        ...article,
-        article_id: data?.article._id,
-        article_extras:
-          articleExtras != null ? articleExtras : data?.article_extras,
-      }),
-    });
+		const rjson = await safe_fetch(window.BASE_URL + "/api/db/update_article", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"auth-token": validauthtoken,
+			},
+			body: JSON.stringify({
+				...article,
+				article_id: data?.article._id,
+				article_extras:
+					articleExtras != null ? articleExtras : data?.article_extras,
+			}),
+		});
 
-    if (rjson.success) {
-      console.log("Suceess! Reloading.");
-      navigate(0);
-    }
-  };
+		if (rjson.success) {
+			console.log("Suceess! Reloading.");
+			navigate(0);
+		}
+	};
 
-  if (!isAdmin) {
-    return <h1>Non-admins can't view this page!</h1>;
-  }
+	if (!isAdmin) {
+		return <h1>Non-admins can't view this page!</h1>;
+	}
 
-  if (isLoading) {
-    return <h2>Loading...</h2>;
-  }
+	if (isLoading) {
+		return <h2>Loading...</h2>;
+	}
 
-  if (error || !data) {
-    return <h1>An unknown error occurred while fetching the article.</h1>;
-  }
+	if (error || !data) {
+		return <h1>An unknown error occurred while fetching the article.</h1>;
+	}
 
-  return (
-    <>
-      <main id="edit_prod">
-        <h1>Edit a Production Article</h1>
-        <h2>Slug: {slug}</h2>
-        <p>Slug:</p>
-        <input
-          type="text"
-          value={article.slug || ""}
-          onChange={(e) => setArticle({ ...article, slug: e.target.value })}
-        />
+	return (
+		<>
+			<main id="edit_prod">
+				<h1>Edit a Production Article</h1>
+				<h2>Slug: {slug}</h2>
+				<p>Slug:</p>
+				<input
+					type="text"
+					value={article.slug || ""}
+					onChange={(e) => setArticle({ ...article, slug: e.target.value })}
+				/>
 
-        <p>Title:</p>
-        <input
-          type="text"
-          value={article.title || ""}
-          onChange={(e) => setArticle({ ...article, title: e.target.value })}
-        />
+				<p>Title:</p>
+				<input
+					type="text"
+					value={article.title || ""}
+					onChange={(e) => setArticle({ ...article, title: e.target.value })}
+				/>
 
-        <p>Section Id:</p>
-        <input
-          type="number"
-          value={article.section_id || 0}
-          onChange={(e) =>
-            setArticle({ ...article, section_id: +e.target.value })
-          }
-        />
+				<p>Section Id:</p>
+				<input
+					type="number"
+					value={article.section_id || 0}
+					onChange={(e) =>
+						setArticle({ ...article, section_id: +e.target.value })
+					}
+				/>
 
-        <p>
-          For section id:{" "}
-          {[
-            "news",
-            "features",
-            "opinions",
-            "science",
-            "humor",
-            "sports",
-            "ae",
-            "media",
-            "spec-plus",
-          ]
-            .map((v, i) => `${i}: ${v}`)
-            .join("; ")}
-        </p>
+				<p>
+					For section id:{" "}
+					{[
+						"news",
+						"features",
+						"opinions",
+						"science",
+						"humor",
+						"sports",
+						"ae",
+						"media",
+						"spec-plus",
+						"games",
+					]
+						.map((v, i) => `${i}: ${v}`)
+						.join("; ")}
+				</p>
 
-        <form onSubmit={updateArticle}>
-          <p>Volume:</p>
-          <input
-            type="number"
-            value={article.volume || 0}
-            onChange={(e) =>
-              setArticle({ ...article, volume: +e.target.value })
-            }
-          />
-          <p>Issue:</p>
-          <input
-            type="number"
-            value={article.issue || 0}
-            onChange={(e) => setArticle({ ...article, issue: +e.target.value })}
-          />
+				<form onSubmit={updateArticle}>
+					<p>Volume:</p>
+					<input
+						type="number"
+						value={article.volume || 0}
+						onChange={(e) =>
+							setArticle({ ...article, volume: +e.target.value })
+						}
+					/>
+					<p>Issue:</p>
+					<input
+						type="number"
+						value={article.issue || 0}
+						onChange={(e) => setArticle({ ...article, issue: +e.target.value })}
+					/>
 
-          <ContributorPopUp
-            selectedContributors={article.contributors || []}
-            setSelectedContributors={(v: any) => {
-              console.log(v);
-              setArticle({ ...article, contributors: v });
-            }}
-            title="Article Contributors:"
-          ></ContributorPopUp>
+					<ContributorPopUp
+						selectedContributors={article.contributors || []}
+						setSelectedContributors={(v: any) => {
+							console.log(v);
+							setArticle({ ...article, contributors: v });
+						}}
+						title="Article Contributors:"
+					></ContributorPopUp>
 
-          <p>Article text:</p>
+					<p>Article text:</p>
 
-          <textarea
-            name="text"
-            className="article-text"
-            value={article.text || ""}
-            onChange={(e) => setArticle({ ...article, text: e.target.value })}
-          ></textarea>
-          <ImageExtras
-            article={article}
-            article_extras={
-              articleExtras != null ? articleExtras : data.article_extras
-            }
-            setArticleExtras={setArticleExtras}
-          />
-          <input type="submit" value="Update production article" />
-        </form>
+					<textarea
+						name="text"
+						className="article-text"
+						value={article.text || ""}
+						onChange={(e) => setArticle({ ...article, text: e.target.value })}
+					></textarea>
+					<ImageExtras
+						article={article}
+						article_extras={
+							articleExtras != null ? articleExtras : data.article_extras
+						}
+						setArticleExtras={setArticleExtras}
+					/>
+					<input type="submit" value="Update production article" />
+				</form>
 
-        <section>
-          <h2>Notes:</h2>
-          <p>To create an image within the body, use:</p>
-          <code>{'<div class="content_img"></div>'}</code>
-        </section>
-      </main>
-    </>
-  );
+				<section>
+					<h2>Notes:</h2>
+					<p>To create an image within the body, use:</p>
+					<code>{'<div class="content_img"></div>'}</code>
+				</section>
+			</main>
+		</>
+	);
 }
