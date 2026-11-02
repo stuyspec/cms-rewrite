@@ -196,9 +196,9 @@ function Create_Draft() {
 					<option value="6">Arts and Entertainment</option>
 					<option value="4">Humor</option>
 					<option value="5">Sports</option>
-					<option value="7">Games</option>
-					<option value="8">Media</option>
-					<option value="9">Spec+</option>
+					<option value="9">Games</option>
+					<option value="7">Media</option>
+					<option value="8">Spec+</option>
 				</select>
 				<h3>
 					sub_section: &nbsp;

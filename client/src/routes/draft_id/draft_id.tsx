@@ -11,6 +11,7 @@ import Editor from "../../components/RichTextEditor/Editor";
 import useAuth from "../../helpers/useAuth";
 import subSections from "../../helpers/subSections";
 import { setError } from "../../reducers/error";
+import Sudoku from "../../components/SudokuInput/Sudoku";
 
 interface DraftsResponse {
 	drafts: Draft[];
@@ -29,6 +30,7 @@ function EditDraftPage() {
 		useState<any>([]);
 	const [html, setHTML] = useState("");
 	const [subSection, setSubSection] = useState<string>("");
+	const [articleType, setArticleType] = useState<string>("article");
 
 	const fetchDraft = async () => {
 		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/get_drafts", {
@@ -48,6 +50,10 @@ function EditDraftPage() {
 				: [],
 		);
 		setSubSection(rjson.drafts[0].sub_section || "");
+		setArticleType(rjson.drafts[0].arttype || "article");
+		// Sudoku only calls setHTML when its own submit button is pressed, so seed
+		// this to stop "Submit the edit" from overwriting the puzzle with "".
+		setHTML(rjson.drafts[0].text);
 	};
 
 	const submitEdit = async (willPublish: boolean) => {
@@ -61,7 +67,6 @@ function EditDraftPage() {
 
 		const section_id = (document.getElementById("edit_section") as any)?.value;
 		const summary = (document.getElementById("edit_summary") as any)?.value;
-		const arttype = (document.getElementById("article_type") as any)?.value;
 
 		const send: any = {
 			volume,
@@ -70,7 +75,6 @@ function EditDraftPage() {
 			contributors: contributors,
 			section_id,
 			summary,
-			arttype, //make sure this works because i don't know how this function works
 		};
 
 		let text = html;
@@ -81,6 +85,7 @@ function EditDraftPage() {
 			);
 		}
 		send.text = text;
+		send.arttype = articleType;
 
 		if (subSection) {
 			send.sub_section = subSection;
@@ -216,13 +221,17 @@ function EditDraftPage() {
 						></ContributorPopUp>
 						{/* <textarea id="text" defaultValue={draft.text} /> */}
 						<h3>
-							ArticleType: &nbsp;
-							<textarea
-								defaultValue={draft.arttype}
+							ArticleType (if selecting crossword, it doesn't matter what you
+							put for article text):&nbsp;
+							<select
 								id="article_type"
-								rows={5}
-								cols={33}
-							/>
+								value={articleType}
+								onChange={(e) => setArticleType(e.target.value)}
+							>
+								<option value="article">article</option>
+								<option value="sudoku">sudoku</option>
+								<option value="crossword">crossword</option>
+							</select>
 						</h3>
 						<h3>
 							Summary: &nbsp;
@@ -243,9 +252,9 @@ function EditDraftPage() {
 								<option value="6">Arts and Entertainment</option>
 								<option value="4">Humor</option>
 								<option value="5">Sports</option>
-								<option value="7">Games</option>
-								<option value="8">Media</option>
-								<option value="9">Spec+</option>
+								<option value="9">Games</option>
+								<option value="7">Media</option>
+								<option value="8">Spec+</option>
 							</select>
 						</h3>
 						<h3>
@@ -274,9 +283,19 @@ function EditDraftPage() {
 								})}
 							</select>
 						</h3>
-						<div className="formattedEditor">
-							<Editor setHTML={setHTML} htmlString={draft.text} />
-						</div>
+						{articleType === "sudoku" ? (
+							<div className="sudoku">
+								{/* draft.text is only JSON if the saved draft is already a sudoku */}
+								<Sudoku
+									setHTML={setHTML}
+									htmlString={draft.arttype === "sudoku" ? draft.text : undefined}
+								/>
+							</div>
+						) : (
+							<div className="formattedEditor">
+								<Editor setHTML={setHTML} htmlString={draft.text} />
+							</div>
+						)}
 					</div>
 					<button id="submit_edit_button" onClick={submitEditHandler}>
 						Submit the edit

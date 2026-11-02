@@ -179,6 +179,11 @@ function Sudoku(props: { setHTML: Function; htmlString?: string }) {
 												const temp = boardState.slice(0);
 												temp[currindex].value = e.target.value;
 												setBoardState(temp);
+												const copyablearray: string[] = [];
+												boardState.map((tile: TileObj) => {
+													copyablearray.push(tile.value);
+												});
+												props.setHTML(JSON.stringify(copyablearray));
 											}}
 											onFocus={() => {
 												// SELECTION
@@ -200,17 +205,6 @@ function Sudoku(props: { setHTML: Function; htmlString?: string }) {
 						</div>
 					);
 				})}
-			<button
-				onClick={() => {
-					const copyablearray: string[] = [];
-					boardState.map((tile: TileObj) => {
-						copyablearray.push(tile.value);
-					});
-					props.setHTML(JSON.stringify(copyablearray));
-				}}
-			>
-				Submit (PLEASE PRESS ME PLEASE)
-			</button>
 		</>
 	);
 }
