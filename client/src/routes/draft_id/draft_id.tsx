@@ -14,314 +14,316 @@ import { setError } from "../../reducers/error";
 import Sudoku from "../../components/SudokuInput/Sudoku";
 
 interface DraftsResponse {
-	drafts: Draft[];
-	description: string;
+  drafts: Draft[];
+  description: string;
 }
 
 function EditDraftPage() {
-	const navigate = useNavigate();
-	const { loading, validauthtoken, isAdmin } = useAuth();
-	const { slug: draft_id } = useParams();
+  const navigate = useNavigate();
+  const { loading, validauthtoken, isAdmin } = useAuth();
+  const { slug: draft_id } = useParams();
 
-	const [draft, setDraft] = useState<Draft | null>(null);
-	const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
-	const [selectedContributors, setSelectedContributors] = useState<any>([]);
-	const [selectedImageContributors, setSelectedImageContributors] =
-		useState<any>([]);
-	const [html, setHTML] = useState("");
-	const [subSection, setSubSection] = useState<string>("");
-	const [articleType, setArticleType] = useState<string>("article");
+  const [draft, setDraft] = useState<Draft | null>(null);
+  const [coverImageURL, setCoverImageURL] = useState<string | null>(null);
+  const [selectedContributors, setSelectedContributors] = useState<any>([]);
+  const [selectedImageContributors, setSelectedImageContributors] =
+    useState<any>([]);
+  const [html, setHTML] = useState("");
+  const [subSection, setSubSection] = useState<string>("");
+  const [articleType, setArticleType] = useState<string>("article");
 
-	const fetchDraft = async () => {
-		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/get_drafts", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"auth-token": validauthtoken,
-			},
-			body: JSON.stringify({ _id: draft_id }),
-		})) as DraftsResponse;
+  const fetchDraft = async () => {
+    const rjson = (await safe_fetch(window.BASE_URL + "/api/db/get_drafts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": validauthtoken,
+      },
+      body: JSON.stringify({ _id: draft_id }),
+    })) as DraftsResponse;
 
-		setDraft(rjson.drafts[0]);
-		setSelectedContributors(rjson.drafts[0].contributors);
-		setSelectedImageContributors(
-			rjson.drafts[0].cover_image_contributor
-				? rjson.drafts[0].cover_image_contributor
-				: [],
-		);
-		setSubSection(rjson.drafts[0].sub_section || "");
-		setArticleType(rjson.drafts[0].arttype || "article");
-		// Sudoku only calls setHTML when its own submit button is pressed, so seed
-		// this to stop "Submit the edit" from overwriting the puzzle with "".
-		setHTML(rjson.drafts[0].text);
-	};
+    setDraft(rjson.drafts[0]);
+    setSelectedContributors(rjson.drafts[0].contributors);
+    setSelectedImageContributors(
+      rjson.drafts[0].cover_image_contributor
+        ? rjson.drafts[0].cover_image_contributor
+        : [],
+    );
+    setSubSection(rjson.drafts[0].sub_section || "");
+    setArticleType(rjson.drafts[0].article_type || "article");
+    // Sudoku only calls setHTML when its own submit button is pressed, so seed
+    // this to stop "Submit the edit" from overwriting the puzzle with "".
+    setHTML(rjson.drafts[0].text);
+  };
 
-	const submitEdit = async (willPublish: boolean) => {
-		console.log("Submit edit");
-		const volume = (document.getElementById("edit_volume") as any)?.value;
-		const issue = (document.getElementById("edit_issue") as any)?.value;
-		const title = (document.getElementById("edit_title") as any)?.value;
-		const contributors: string[] = selectedContributors.map((c: any) => c._id);
-		let cover_image_contributor: string[] | string =
-			selectedImageContributors.map((c: any) => c._id);
+  const submitEdit = async (willPublish: boolean) => {
+    console.log("Submit edit");
+    const volume = (document.getElementById("edit_volume") as any)?.value;
+    const issue = (document.getElementById("edit_issue") as any)?.value;
+    const title = (document.getElementById("edit_title") as any)?.value;
+    const contributors: string[] = selectedContributors.map((c: any) => c._id);
+    let cover_image_contributor: string[] | string =
+      selectedImageContributors.map((c: any) => c._id);
 
-		const section_id = (document.getElementById("edit_section") as any)?.value;
-		const summary = (document.getElementById("edit_summary") as any)?.value;
+    const section_id = (document.getElementById("edit_section") as any)?.value;
+    const summary = (document.getElementById("edit_summary") as any)?.value;
 
-		const send: any = {
-			volume,
-			issue,
-			title,
-			contributors: contributors,
-			section_id,
-			summary,
-		};
+    const send: any = {
+      volume,
+      issue,
+      title,
+      contributors: contributors,
+      section_id,
+      summary,
+    };
 
-		let text = html;
-		if (willPublish) {
-			text = text.replace(
-				new RegExp(/\(insert image here\)/, "g"),
-				'<div class="content_img"></div>',
-			);
-		}
-		send.text = text;
-		send.arttype = articleType;
+    let text = html;
+    if (willPublish) {
+      text = text.replace(
+        new RegExp(/\(insert image here\)/, "g"),
+        '<div class="content_img"></div>',
+      );
+    }
+    send.text = text;
+    send.article_type = articleType;
 
-		if (subSection) {
-			send.sub_section = subSection;
-		}
-		const cover_image_to_use = coverImageURL
-			? coverImageURL
-			: draft?.cover_image;
-		if (cover_image_to_use && cover_image_contributor) {
-			send.cover_image = cover_image_to_use;
-			send.cover_image_contributor = cover_image_contributor; //add other images like in create_draft
-		}
+    if (subSection) {
+      send.sub_section = subSection;
+    }
+    const cover_image_to_use = coverImageURL
+      ? coverImageURL
+      : draft?.cover_image;
+    if (cover_image_to_use && cover_image_contributor) {
+      send.cover_image = cover_image_to_use;
+      send.cover_image_contributor = cover_image_contributor; //add other images like in create_draft
+    }
 
-		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/update_draft", {
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-				"auth-token": validauthtoken,
-			},
-			body: JSON.stringify({ draft_id: draft?._id, update: send }),
-		})) as { success: boolean };
+    const rjson = (await safe_fetch(window.BASE_URL + "/api/db/update_draft", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": validauthtoken,
+      },
+      body: JSON.stringify({ draft_id: draft?._id, update: send }),
+    })) as { success: boolean };
 
-		return rjson;
-	};
+    return rjson;
+  };
 
-	const submitEditHandler = async () => {
-		const rjson = await submitEdit(false);
+  const submitEditHandler = async () => {
+    const rjson = await submitEdit(false);
 
-		if (rjson.success) {
-			console.log("Suceess! Reloading.");
-			navigate(0);
-		}
-	};
+    if (rjson.success) {
+      console.log("Suceess! Reloading.");
+      navigate(0);
+    }
+  };
 
-	useEffect(() => {
-		(async () => {
-			if (validauthtoken) {
-				await fetchDraft().catch(handle_error);
-			}
-		})();
-	}, [validauthtoken]);
-	const upload_cover_image = async () => {
-		// In case event listener remains, or is triggered manually, etc
-		const uploaded_files = (
-			document.getElementById("upload_cover_image") as any
-		).files;
-		if (uploaded_files.length > 0) {
-			const uploaded_file = uploaded_files[0]; // always grab first
-			const public_url = (await upload_image_helper(
-				uploaded_file,
-				validauthtoken,
-			)) as string;
-			console.log(public_url);
-			setCoverImageURL(public_url);
-		}
-	};
+  useEffect(() => {
+    (async () => {
+      if (validauthtoken) {
+        await fetchDraft().catch(handle_error);
+      }
+    })();
+  }, [validauthtoken]);
+  const upload_cover_image = async () => {
+    // In case event listener remains, or is triggered manually, etc
+    const uploaded_files = (
+      document.getElementById("upload_cover_image") as any
+    ).files;
+    if (uploaded_files.length > 0) {
+      const uploaded_file = uploaded_files[0]; // always grab first
+      const public_url = (await upload_image_helper(
+        uploaded_file,
+        validauthtoken,
+      )) as string;
+      console.log(public_url);
+      setCoverImageURL(public_url);
+    }
+  };
 
-	const publishDraft = async () => {
-		console.log("Publish Draft");
+  const publishDraft = async () => {
+    console.log("Publish Draft");
 
-		const rjson_edit = await submitEdit(true);
-		if (!rjson_edit.success) {
-			setError("Editing was unsuccessful before publishing.");
-			return;
-		}
+    const rjson_edit = await submitEdit(true);
+    if (!rjson_edit.success) {
+      setError("Editing was unsuccessful before publishing.");
+      return;
+    }
 
-		const rjson = await safe_fetch(
-			window.BASE_URL + "/api/db/publish_article",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					"auth-token": validauthtoken,
-				},
-				body: JSON.stringify({ draft_id: draft?._id }),
-			},
-		);
+    const rjson = await safe_fetch(
+      window.BASE_URL + "/api/db/publish_article",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": validauthtoken,
+        },
+        body: JSON.stringify({ draft_id: draft?._id }),
+      },
+    );
 
-		if (rjson.article) {
-			window.open("https://stuyspec.com/article/" + rjson.article.slug);
-			window.location.replace("/");
-		}
-	};
+    if (rjson.article) {
+      window.open("https://stuyspec.com/article/" + rjson.article.slug);
+      window.location.replace("/");
+    }
+  };
 
-	return (
-		<div>
-			<h2>Draft id: {draft_id}</h2>
-			{draft ? (
-				<div>
-					<div id="draft_data">
-						<h2>
-							Volume:&nbsp;
-							<input
-								type="number"
-								id="edit_volume"
-								defaultValue={draft.volume}
-							/>
-							&nbsp;|&nbsp; Issue:&nbsp;
-							<input type="number" id="edit_issue" defaultValue={draft.issue} />
-						</h2>
-						<h2>
-							Draft title:&nbsp;
-							<input type="text" id="edit_title" defaultValue={draft.title} />
-						</h2>
+  return (
+    <div>
+      <h2>Draft id: {draft_id}</h2>
+      {draft ? (
+        <div>
+          <div id="draft_data">
+            <h2>
+              Volume:&nbsp;
+              <input
+                type="number"
+                id="edit_volume"
+                defaultValue={draft.volume}
+              />
+              &nbsp;|&nbsp; Issue:&nbsp;
+              <input type="number" id="edit_issue" defaultValue={draft.issue} />
+            </h2>
+            <h2>
+              Draft title:&nbsp;
+              <input type="text" id="edit_title" defaultValue={draft.title} />
+            </h2>
 
-						<ContributorPopUp
-							selectedContributors={selectedContributors}
-							setSelectedContributors={setSelectedContributors}
-							title="Article Contributors:"
-						></ContributorPopUp>
-						<img //replace with map or wtv
-							id="cover_image"
-							src={coverImageURL ? coverImageURL : draft.cover_image}
-						/>
-						<div>
-							<input
-								type="file"
-								accept="image/png, image/jpg, image/jpeg"
-								id="upload_cover_image"
-								onChange={upload_cover_image}
-								multiple
-							/>
-						</div>
+            <ContributorPopUp
+              selectedContributors={selectedContributors}
+              setSelectedContributors={setSelectedContributors}
+              title="Article Contributors:"
+            ></ContributorPopUp>
+            <img //replace with map or wtv
+              id="cover_image"
+              src={coverImageURL ? coverImageURL : draft.cover_image}
+            />
+            <div>
+              <input
+                type="file"
+                accept="image/png, image/jpg, image/jpeg"
+                id="upload_cover_image"
+                onChange={upload_cover_image}
+                multiple
+              />
+            </div>
 
-						<ContributorPopUp
-							selectedContributors={
-								selectedImageContributors.length > 0
-									? selectedImageContributors
-									: []
-							}
-							setSelectedContributors={setSelectedImageContributors}
-							title="Image Contributors:"
-							duplicates_allowed={true}
-						></ContributorPopUp>
-						{/* <textarea id="text" defaultValue={draft.text} /> */}
-						<h3>
-							ArticleType (if selecting crossword, it doesn't matter what you
-							put for article text):&nbsp;
-							<select
-								id="article_type"
-								value={articleType}
-								onChange={(e) => setArticleType(e.target.value)}
-							>
-								<option value="article">article</option>
-								<option value="sudoku">sudoku</option>
-								<option value="crossword">crossword</option>
-							</select>
-						</h3>
-						<h3>
-							Summary: &nbsp;
-							<textarea
-								defaultValue={draft.summary}
-								id="edit_summary"
-								rows={5}
-								cols={33}
-							/>
-						</h3>
-						<h3>
-							Section:&nbsp;
-							<select id="edit_section" defaultValue={draft.section_id}>
-								<option value="0">News</option>
-								<option value="1">Features</option>
-								<option value="2">Opinions</option>
-								<option value="3">Science</option>
-								<option value="6">Arts and Entertainment</option>
-								<option value="4">Humor</option>
-								<option value="5">Sports</option>
-								<option value="9">Games</option>
-								<option value="7">Media</option>
-								<option value="8">Spec+</option>
-							</select>
-						</h3>
-						<h3>
-							sub_section: &nbsp;
-							<select
-								onChange={(e) => {
-									setSubSection(e.target.value);
-								}}
-								value={subSection}
-								defaultValue={draft.sub_section} //please double check this, because it didn't exist in the previous version of subsection, but i added it because i figure it must exist right???
-								//also i couldn't get the server to work to check it myself lol
-							>
-								<option value="" />
-								{subSections.map((v_substr: string[]) => {
-									return (
-										<optgroup label={v_substr[0]}>
-											{v_substr.slice(1).map((otherv_substr: string) => {
-												return (
-													<option key={otherv_substr} value={otherv_substr}>
-														{otherv_substr}
-													</option>
-												);
-											})}
-										</optgroup>
-									);
-								})}
-							</select>
-						</h3>
-						{articleType === "sudoku" ? (
-							<div className="sudoku">
-								{/* draft.text is only JSON if the saved draft is already a sudoku */}
-								<Sudoku
-									setHTML={setHTML}
-									htmlString={draft.arttype === "sudoku" ? draft.text : undefined}
-								/>
-							</div>
-						) : (
-							<div className="formattedEditor">
-								<Editor setHTML={setHTML} htmlString={draft.text} />
-							</div>
-						)}
-					</div>
-					<button id="submit_edit_button" onClick={submitEditHandler}>
-						Submit the edit
-					</button>
-					<br />
-					<button
-						onClick={() => {
-							deleteDraft(draft._id, validauthtoken);
-						}}
-					>
-						Delete
-					</button>
-					<br />
-					{isAdmin ? (
-						<button id="publish_button" onClick={publishDraft}>
-							Publish
-						</button>
-					) : (
-						<></>
-					)}
-				</div>
-			) : (
-				<div></div>
-			)}
-		</div>
-	);
+            <ContributorPopUp
+              selectedContributors={
+                selectedImageContributors.length > 0
+                  ? selectedImageContributors
+                  : []
+              }
+              setSelectedContributors={setSelectedImageContributors}
+              title="Image Contributors:"
+              duplicates_allowed={true}
+            ></ContributorPopUp>
+            {/* <textarea id="text" defaultValue={draft.text} /> */}
+            <h3>
+              ArticleType (if selecting crossword, it doesn't matter what you
+              put for article text):&nbsp;
+              <select
+                id="article_type"
+                value={articleType}
+                onChange={(e) => setArticleType(e.target.value)}
+              >
+                <option value="article">article</option>
+                <option value="sudoku">sudoku</option>
+                <option value="crossword">crossword</option>
+              </select>
+            </h3>
+            <h3>
+              Summary: &nbsp;
+              <textarea
+                defaultValue={draft.summary}
+                id="edit_summary"
+                rows={5}
+                cols={33}
+              />
+            </h3>
+            <h3>
+              Section:&nbsp;
+              <select id="edit_section" defaultValue={draft.section_id}>
+                <option value="0">News</option>
+                <option value="1">Features</option>
+                <option value="2">Opinions</option>
+                <option value="3">Science</option>
+                <option value="6">Arts and Entertainment</option>
+                <option value="4">Humor</option>
+                <option value="5">Sports</option>
+                <option value="9">Games</option>
+                <option value="7">Media</option>
+                <option value="8">Spec+</option>
+              </select>
+            </h3>
+            <h3>
+              sub_section: &nbsp;
+              <select
+                onChange={(e) => {
+                  setSubSection(e.target.value);
+                }}
+                value={subSection}
+                defaultValue={draft.sub_section} //please double check this, because it didn't exist in the previous version of subsection, but i added it because i figure it must exist right???
+                //also i couldn't get the server to work to check it myself lol
+              >
+                <option value="" />
+                {subSections.map((v_substr: string[]) => {
+                  return (
+                    <optgroup label={v_substr[0]}>
+                      {v_substr.slice(1).map((otherv_substr: string) => {
+                        return (
+                          <option key={otherv_substr} value={otherv_substr}>
+                            {otherv_substr}
+                          </option>
+                        );
+                      })}
+                    </optgroup>
+                  );
+                })}
+              </select>
+            </h3>
+            {articleType === "sudoku" ? (
+              <div className="sudoku">
+                {/* draft.text is only JSON if the saved draft is already a sudoku */}
+                <Sudoku
+                  setHTML={setHTML}
+                  htmlString={
+                    draft.article_type === "sudoku" ? draft.text : undefined
+                  }
+                />
+              </div>
+            ) : (
+              <div className="formattedEditor">
+                <Editor setHTML={setHTML} htmlString={draft.text} />
+              </div>
+            )}
+          </div>
+          <button id="submit_edit_button" onClick={submitEditHandler}>
+            Submit the edit
+          </button>
+          <br />
+          <button
+            onClick={() => {
+              deleteDraft(draft._id, validauthtoken);
+            }}
+          >
+            Delete
+          </button>
+          <br />
+          {isAdmin ? (
+            <button id="publish_button" onClick={publishDraft}>
+              Publish
+            </button>
+          ) : (
+            <></>
+          )}
+        </div>
+      ) : (
+        <div></div>
+      )}
+    </div>
+  );
 }
 
 export default EditDraftPage;

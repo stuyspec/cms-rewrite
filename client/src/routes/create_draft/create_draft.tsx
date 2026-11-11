@@ -15,8 +15,8 @@ import subSections from "../../helpers/subSections";
 import Sudoku from "../../components/SudokuInput/Sudoku";
 
 interface CreateDraftResponse {
-	draft: Draft;
-	description: string;
+  draft: Draft;
+  description: string;
 }
 
 /*function downloadDraft(content: string, filename: string, contentType: string) {
@@ -37,216 +37,216 @@ async function copytoclipboard(text: string): Promise<void> {
 }*/
 
 function Create_Draft() {
-	const { loading, validauthtoken, isApproved } = useAuth();
+  const { loading, validauthtoken, isApproved } = useAuth();
 
-	// const [editorState, setEditorState] = useState(EditorState.createEmpty());
-	const [coverImageURL, setCoverImageURL] = useState<string[] | null>(null);
-	const [selectedContributors, setSelectedContributors] = useState<any>([]);
-	const [selectedImageContributors, setSelectedImageContributors] =
-		useState<any>([]);
-	const [html, setHTML] = useState<string>("");
-	const [subSection, setSubSection] = useState<string>("");
-	const [articleType, setArticleType] = useState<string>("article");
+  // const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [coverImageURL, setCoverImageURL] = useState<string[] | null>(null);
+  const [selectedContributors, setSelectedContributors] = useState<any>([]);
+  const [selectedImageContributors, setSelectedImageContributors] =
+    useState<any>([]);
+  const [html, setHTML] = useState<string>("");
+  const [subSection, setSubSection] = useState<string>("");
+  const [articleType, setArticleType] = useState<string>("article");
 
-	const new_draft_handler = async () => {
-		// console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
-		console.log("Create new draft");
-		const volume: string = (document.getElementById("new_volume") as any).value;
-		const issue: string = (document.getElementById("new_issue") as any).value;
-		const title: string = (document.getElementById("new_title") as any).value;
-		const contributors: string[] = selectedContributors.map((c: any) => c._id);
-		const cover_image_contributors: string[] = selectedImageContributors.map(
-			(c: any) => c._id,
-		);
+  const new_draft_handler = async () => {
+    // console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
+    console.log("Create new draft");
+    const volume: string = (document.getElementById("new_volume") as any).value;
+    const issue: string = (document.getElementById("new_issue") as any).value;
+    const title: string = (document.getElementById("new_title") as any).value;
+    const contributors: string[] = selectedContributors.map((c: any) => c._id);
+    const cover_image_contributors: string[] = selectedImageContributors.map(
+      (c: any) => c._id,
+    );
 
-		let text: string = String(html);
-		text = text.replace(new RegExp("<p></p>", "g"), ""); // remove breaks between paragraphs
-		text = text.replace(new RegExp("\n", "g"), ""); // remove line breaks in the html
-		const summary: string = (document.getElementById("new_summary") as any)
-			.value;
-		const section_id: number = (document.getElementById("new_section") as any)
-			.value;
+    let text: string = String(html);
+    text = text.replace(new RegExp("<p></p>", "g"), ""); // remove breaks between paragraphs
+    text = text.replace(new RegExp("\n", "g"), ""); // remove line breaks in the html
+    const summary: string = (document.getElementById("new_summary") as any)
+      .value;
+    const section_id: number = (document.getElementById("new_section") as any)
+      .value;
 
-		const body: any = {
-			title: title,
-			contributors: contributors,
-			text: text,
-			volume: volume,
-			issue: issue,
-			section_id: section_id,
-			summary: summary,
-			arttype: articleType,
-		};
-		if (coverImageURL && cover_image_contributors) {
-			body.cover_image = coverImageURL[0];
-			body.cover_image_contributor = cover_image_contributors;
-			body.other_images = coverImageURL.slice(1);
-		}
+    const body: any = {
+      title: title,
+      contributors: contributors,
+      text: text,
+      volume: volume,
+      issue: issue,
+      section_id: section_id,
+      summary: summary,
+      article_type: articleType,
+    };
+    if (coverImageURL && cover_image_contributors) {
+      body.cover_image = coverImageURL[0];
+      body.cover_image_contributor = cover_image_contributors;
+      body.other_images = coverImageURL.slice(1);
+    }
 
-		if (subSection) {
-			body.sub_section = subSection;
-		}
+    if (subSection) {
+      body.sub_section = subSection;
+    }
 
-		console.log({ body });
-		const rjson = (await safe_fetch(window.BASE_URL + "/api/db/create_draft", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				"auth-token": validauthtoken,
-			},
-			body: JSON.stringify(body),
-		})) as CreateDraftResponse;
-		console.log(rjson);
-		window.location.replace("/draft/" + rjson.draft._id);
-	};
+    console.log({ body });
+    const rjson = (await safe_fetch(window.BASE_URL + "/api/db/create_draft", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "auth-token": validauthtoken,
+      },
+      body: JSON.stringify(body),
+    })) as CreateDraftResponse;
+    console.log(rjson);
+    window.location.replace("/draft/" + rjson.draft._id);
+  };
 
-	const upload_cover_image = async () => {
-		// In case event listener remains, or is triggered manually, etc
-		const uploaded_files = (
-			document.getElementById("upload_cover_image") as any
-		).files;
-		if (uploaded_files.length > 0) {
-			let images = [];
-			for (let i = 0; i < uploaded_files.length; i++) {
-				const uploaded_file = uploaded_files[i];
-				const public_url = (await upload_image_helper(
-					uploaded_file,
-					validauthtoken,
-				)) as string;
-				images.push(public_url);
-			}
-			setCoverImageURL(images);
-		}
-	};
+  const upload_cover_image = async () => {
+    // In case event listener remains, or is triggered manually, etc
+    const uploaded_files = (
+      document.getElementById("upload_cover_image") as any
+    ).files;
+    if (uploaded_files.length > 0) {
+      let images = [];
+      for (let i = 0; i < uploaded_files.length; i++) {
+        const uploaded_file = uploaded_files[i];
+        const public_url = (await upload_image_helper(
+          uploaded_file,
+          validauthtoken,
+        )) as string;
+        images.push(public_url);
+      }
+      setCoverImageURL(images);
+    }
+  };
 
-	return (
-		<div>
-			<h1>Create Draft</h1>
-			<div id="new_draft_fom">
-				<h2>
-					Volume:&nbsp;
-					<input type="number" id="new_volume" />
-					&nbsp;|&nbsp; Issue:&nbsp;
-					<input type="number" id="new_issue" />
-				</h2>
-				<h2>
-					Draft title:&nbsp;
-					<input type="text" id="new_title" />
-				</h2>
+  return (
+    <div>
+      <h1>Create Draft</h1>
+      <div id="new_draft_fom">
+        <h2>
+          Volume:&nbsp;
+          <input type="number" id="new_volume" />
+          &nbsp;|&nbsp; Issue:&nbsp;
+          <input type="number" id="new_issue" />
+        </h2>
+        <h2>
+          Draft title:&nbsp;
+          <input type="text" id="new_title" />
+        </h2>
 
-				<ContributorPopUp
-					selectedContributors={selectedContributors}
-					setSelectedContributors={setSelectedContributors}
-					title="Article Contributors:"
-				></ContributorPopUp>
+        <ContributorPopUp
+          selectedContributors={selectedContributors}
+          setSelectedContributors={setSelectedContributors}
+          title="Article Contributors:"
+        ></ContributorPopUp>
 
-				<div>
-					<h2>Images: first one is the cover image</h2>
-					<input
-						type="file"
-						accept="image/png, image/jpg, image/jpeg"
-						id="upload_cover_image"
-						name="cover_image"
-						multiple
-						onChange={upload_cover_image}
-					/>
-				</div>
-				{coverImageURL ? (
-					<ul>
-						{coverImageURL.map((thingy) => {
-							return (
-								<li key={thingy}>
-									<img id={`image${thingy}`} src={thingy} />
-								</li>
-							);
-						})}
-					</ul>
-				) : (
-					<></>
-				)}
-				<ContributorPopUp
-					selectedContributors={selectedImageContributors}
-					setSelectedContributors={setSelectedImageContributors}
-					title="Image Contributors, place in order of the images: "
-					duplicates_allowed={true}
-				></ContributorPopUp>
-				<h3>
-					ArticleType (if selecting crossword, it doesn't matter what you put
-					for article text):&nbsp;
-					<select
-						id="article_type"
-						value={articleType}
-						onChange={(e) => setArticleType(e.target.value)}
-					>
-						<option value="article">article</option>
-						<option value="sudoku">sudoku</option>
-						<option value="crossword">crossword</option>
-					</select>
-				</h3>
-				<h3>
-					Summary: &nbsp;
-					<textarea id="new_summary" rows={5} cols={33} />
-				</h3>
-				<h3>Section:&nbsp;</h3>
-				<select id="new_section">
-					<option value="0">News</option>
-					<option value="1">Features</option>
-					<option value="2">Opinions</option>
-					<option value="3">Science</option>
-					<option value="6">Arts and Entertainment</option>
-					<option value="4">Humor</option>
-					<option value="5">Sports</option>
-					<option value="9">Games</option>
-					<option value="7">Media</option>
-					<option value="8">Spec+</option>
-				</select>
-				<h3>
-					sub_section: &nbsp;
-					<select
-						onChange={(e) => {
-							setSubSection(e.target.value);
-						}}
-						value={subSection}
-					>
-						<option value="" />
-						{subSections.map((v_substr: string[]) => {
-							return (
-								<optgroup label={v_substr[0]}>
-									{v_substr.slice(1).map((otherv_substr: string) => {
-										return (
-											<option key={otherv_substr} value={otherv_substr}>
-												{otherv_substr}
-											</option>
-										);
-									})}
-								</optgroup>
-							);
-						})}
-					</select>
-				</h3>
+        <div>
+          <h2>Images: first one is the cover image</h2>
+          <input
+            type="file"
+            accept="image/png, image/jpg, image/jpeg"
+            id="upload_cover_image"
+            name="cover_image"
+            multiple
+            onChange={upload_cover_image}
+          />
+        </div>
+        {coverImageURL ? (
+          <ul>
+            {coverImageURL.map((thingy) => {
+              return (
+                <li key={thingy}>
+                  <img id={`image${thingy}`} src={thingy} />
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <></>
+        )}
+        <ContributorPopUp
+          selectedContributors={selectedImageContributors}
+          setSelectedContributors={setSelectedImageContributors}
+          title="Image Contributors, place in order of the images: "
+          duplicates_allowed={true}
+        ></ContributorPopUp>
+        <h3>
+          ArticleType (if selecting crossword, it doesn't matter what you put
+          for article text):&nbsp;
+          <select
+            id="article_type"
+            value={articleType}
+            onChange={(e) => setArticleType(e.target.value)}
+          >
+            <option value="article">article</option>
+            <option value="sudoku">sudoku</option>
+            <option value="crossword">crossword</option>
+          </select>
+        </h3>
+        <h3>
+          Summary: &nbsp;
+          <textarea id="new_summary" rows={5} cols={33} />
+        </h3>
+        <h3>Section:&nbsp;</h3>
+        <select id="new_section">
+          <option value="0">News</option>
+          <option value="1">Features</option>
+          <option value="2">Opinions</option>
+          <option value="3">Science</option>
+          <option value="6">Arts and Entertainment</option>
+          <option value="4">Humor</option>
+          <option value="5">Sports</option>
+          <option value="9">Games</option>
+          <option value="7">Media</option>
+          <option value="8">Spec+</option>
+        </select>
+        <h3>
+          sub_section: &nbsp;
+          <select
+            onChange={(e) => {
+              setSubSection(e.target.value);
+            }}
+            value={subSection}
+          >
+            <option value="" />
+            {subSections.map((v_substr: string[]) => {
+              return (
+                <optgroup label={v_substr[0]}>
+                  {v_substr.slice(1).map((otherv_substr: string) => {
+                    return (
+                      <option key={otherv_substr} value={otherv_substr}>
+                        {otherv_substr}
+                      </option>
+                    );
+                  })}
+                </optgroup>
+              );
+            })}
+          </select>
+        </h3>
 
-				{articleType === "sudoku" ? (
-					<>
-						<h3>The sudoku puzzle:</h3>
-						<div className="sudoku">
-							<Sudoku setHTML={setHTML} />
-						</div>
-					</>
-				) : (
-					<>
-						<h3>
-							The article text (to place in-text images, just put "(insert image
-							here)" as a placeholder for where you want the image to be. Images
-							are added in order you selected them.):
-						</h3>
-						<div className="formattedEditor">
-							<Editor setHTML={setHTML} />
-						</div>
-					</>
-				)}
+        {articleType === "sudoku" ? (
+          <>
+            <h3>The sudoku puzzle:</h3>
+            <div className="sudoku">
+              <Sudoku setHTML={setHTML} />
+            </div>
+          </>
+        ) : (
+          <>
+            <h3>
+              The article text (to place in-text images, just put "(insert image
+              here)" as a placeholder for where you want the image to be. Images
+              are added in order you selected them.):
+            </h3>
+            <div className="formattedEditor">
+              <Editor setHTML={setHTML} />
+            </div>
+          </>
+        )}
 
-				<input onClick={new_draft_handler} type="submit"></input>
-				{/*<button
+        <input onClick={new_draft_handler} type="submit"></input>
+        {/*<button
 					onClick={() => {
 						const temparticledict = {
 							volume: (document.getElementById("new_volume") as any).value,
@@ -321,9 +321,9 @@ function Create_Draft() {
 					after you upload your local article just do control+v in the editor
 					text box
 				</h3> */}
-			</div>
-		</div>
-	);
+      </div>
+    </div>
+  );
 }
 
 export default Create_Draft;
