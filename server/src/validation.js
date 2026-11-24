@@ -27,6 +27,23 @@ const loginValidation = (data) => {
 };
 // Draft Validation
 const draftValidation = (data) => {
+  /*
+  The following function throws an error if the length of the contributor list is not equal to the length of the image list plus one (cover image contributor) 
+  */
+  const equalContributerImageRule = (payload, helpers) => {
+    const imageCount =
+      (payload.cover_image ? 1 : 0) + (payload.other_images?.length || 0);
+
+    const contributorCount = payload.cover_image_contributor?.length ?? 0;
+    if (imageCount !== contributorCount) {
+      return helpers.message({
+        custom: `cover_image_contributor must contain ${imageCount} contributor(s)`,
+      });
+    }
+    console.log("Validation triggered!");
+    return payload;
+  };
+
   const schema = Joi.object({
     text: Joi.string().required(),
     title: Joi.string().min(6).max(512).required(),
@@ -40,7 +57,7 @@ const draftValidation = (data) => {
     other_images: Joi.array().items(Joi.string().uri()).optional(),
     sub_section: Joi.string().max(32).optional(),
     article_type: Joi.string().required(),
-  });
+  }).custom(equalContributerImageRule);
 
   //validate data
   const validation = schema.validate(data);
