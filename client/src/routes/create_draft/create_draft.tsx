@@ -77,11 +77,11 @@ function Create_Draft() {
       summary: summary,
       article_type: articleType,
     };
-    if (coverImageURL && cover_image_contributors) {
+    if (coverImageURL && coverImageURL.length > 0) {
       body.cover_image = coverImageURL[0];
-      body.cover_image_contributor = cover_image_contributors;
       body.other_images = coverImageURL.slice(1);
     }
+    body.cover_image_contributor = cover_image_contributors;
 
     if (subSection) {
       body.sub_section = subSection;
